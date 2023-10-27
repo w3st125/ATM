@@ -1,4 +1,5 @@
 package org.example;
+
 import java.util.ArrayList;
 
 public class Account {
@@ -18,5 +19,6 @@ public class Account {
     public void setBalance(double balance) {
         this.balance = balance;
     }
-*/}
+*/
+}
 
