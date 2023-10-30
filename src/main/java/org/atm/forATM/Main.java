@@ -1,4 +1,4 @@
-package org.example;
+package org.atm.forATM;
 
 
 import java.sql.SQLException;
