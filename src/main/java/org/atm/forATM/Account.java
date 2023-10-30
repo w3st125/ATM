@@ -1,6 +1,4 @@
-package org.example;
-
-import java.util.ArrayList;
+package org.atm.forATM;
 
 public class Account {
   /*  private double balance=0; // копейки не считает, но считаем

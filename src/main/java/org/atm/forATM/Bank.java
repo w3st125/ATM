@@ -1,9 +1,4 @@
-package org.example;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
+package org.atm.forATM;
 
 public class Bank {
 

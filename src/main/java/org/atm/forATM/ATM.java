@@ -1,36 +1,42 @@
-package org.example;
+package org.atm.forATM;
+import org.atm.forConnect.PostgreSQLConnUtils;
 
-import org.example2.PostgreSQLConnUtils;
-
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Scanner;
 
 
 
 public class ATM {
-    static int summa;
+    static BigDecimal summa;
     static int numberOfChoice;
     static Scanner input = new Scanner(System.in);
 
     public static User logging() throws SQLException {
-        int id;
-        int pass;
+        long id;
+        String pass;
 
         do {
             System.out.println("Введите свой ID");
-            id = input.nextInt();
+            id = Long.parseLong(input.nextLine());
             System.out.println("Введите свой пароль");
-            pass = input.nextInt();
-            if ((id != PostgreSQLConnUtils.getUserFromTable(id).getId() || (pass != PostgreSQLConnUtils.getUserFromTable(id).getPassword()))) {
+            pass = input.nextLine();
+            if ((id != PostgreSQLConnUtils.getUserFromTable(id).getId() || (!Objects.equals(pass, PostgreSQLConnUtils.getUserFromTable(id).getPassword())))) {
                 System.out.println("Введен неправильный ID или пароль, поробуйте еще раз");
             }
-        } while ((id != PostgreSQLConnUtils.getUserFromTable(id).getId() || (pass != PostgreSQLConnUtils.getUserFromTable(id).getPassword())));
+        } while ((id != PostgreSQLConnUtils.getUserFromTable(id).getId() || (!Objects.equals(pass, PostgreSQLConnUtils.getUserFromTable(id).getPassword()))));
         return PostgreSQLConnUtils.getUserFromTable(id);
     }
 
     public static void outputOnDisplay(User user) throws SQLException {
+
         do {
-            System.out.println("\n" + "\n" + "1) Показать баланс." + "\n" + "2) Вывести деньги." + "\n" + "3) Добавить деньги." + "\n" + "4) Выход.");
+            System.out.println("""
+                    1) Показать баланс.
+                    2) Вывести деньги.
+                    3) Добавить деньги.
+                    4) Выход.""");
 
             System.out.println("\n" + "Введите номер необходимой вам функции:");
             numberOfChoice = input.nextInt();
@@ -41,15 +47,19 @@ public class ATM {
                     break;
                 case (2):
                     System.out.println("Сколько вы хотите снять?");
-                    summa = input.nextInt();
-                    if ((PostgreSQLConnUtils.getUserFromTable(user.getId()).getBalance() - summa) < 0) {
+                    summa = new BigDecimal(input.next());
+                    if ((PostgreSQLConnUtils.getUserFromTable(user.getId()).getBalance().subtract(summa)).compareTo(BigDecimal.ZERO) < 0) {
                         System.out.println("На счёте недостаточно средств");
-                    } else PostgreSQLConnUtils.setBalanceToTable(user.getId(),(user.getBalance()-summa));
+                    } else {
+                        PostgreSQLConnUtils.setBalanceToTable(user.getId(), (user.getBalance().subtract(summa)));
+                        user.setBalance(user.getBalance().subtract(summa));
+                    }
                     break;
                 case (3):
                     System.out.println("Сколько вы хотите положить");
-                    summa = input.nextInt();
-                    PostgreSQLConnUtils.setBalanceToTable(user.getId(),(user.getBalance()+summa));
+                    summa = new BigDecimal(input.next());
+                    PostgreSQLConnUtils.setBalanceToTable(user.getId(),(user.getBalance().add(summa)));
+                    user.setBalance(user.getBalance().add(summa));
                     break;
                 case (4):
                     System.out.println("затычка 4");

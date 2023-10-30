@@ -1,4 +1,4 @@
-package org.example;
+package org.atm.forATM;
 
 public class Transaction {
     private int sumOfTransaction; // сумма транзакции

@@ -1,7 +1,8 @@
-package org.example2;
+package org.atm.forConnect;
+import org.atm.forATM.User;
 
-import org.example.User;
 
+import java.math.BigDecimal;
 import java.sql.*;
 
 
@@ -20,25 +21,23 @@ public class PostgreSQLConnUtils {
     }
 
 
-    public static User getUserFromTable(int id) throws SQLException {
+    public static User getUserFromTable(long id) throws SQLException {
         ResultSet resultSet = statement.executeQuery("select id,pass,balance from users where (id = '" + id + "');");
-        int userId = 0;
-        int userPass = 0;
-        int userBalance = 0;
-        while (resultSet.next()) {
-            userId = resultSet.getInt(1);
-            userPass = resultSet.getInt(2);
-            userBalance = resultSet.getInt(3);
+        long userId = 0;
+        String userPass = "";
+        BigDecimal userBalance = BigDecimal.ZERO;
+        if (resultSet.next()) {
+            userId = resultSet.getLong(1);
+            userPass = resultSet.getString(2);
+            userBalance = resultSet.getBigDecimal(3);
         }
         User user = new User(userId, userPass, userBalance);
         return user;
     }
 
-    public static void setBalanceToTable(int id, int sum) throws SQLException {
-        ResultSet resultSet = statement.executeQuery("select * from users where (id = '" + id + "');");
-        resultSet.first();
-        resultSet.updateInt(3,sum);
-        resultSet.updateRow();
+    public static void setBalanceToTable(long id, BigDecimal sum) throws SQLException {
+        statement.executeUpdate("update users set balance ="+sum+" where (id = '" + id + "');");
+
     }
 
     public static Connection getPostgreSQLConnection() {
