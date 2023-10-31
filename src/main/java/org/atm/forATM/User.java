@@ -3,7 +3,7 @@ package org.atm.forATM;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class User implements Cloneable {
+public class User{
     private long id;
     private String password;
     private BigDecimal balance; // копейки не считает, но считаем
@@ -33,15 +33,4 @@ public class User implements Cloneable {
     }
 
 
-
-//    @Override
-//    public User clone() {
-//        try {
-//            User clone = (User) super.clone();
-//            // TODO: copy mutable state here, so the clone can't change the internals of the original
-//            return clone;
-//        } catch (CloneNotSupportedException e) {
-//            throw new AssertionError();
-//        }
-//    }
 }

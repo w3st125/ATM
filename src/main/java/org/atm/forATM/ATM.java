@@ -1,35 +1,42 @@
 package org.atm.forATM;
-import org.atm.forConnect.PostgreSQLConnUtils;
+import org.atm.forConnect.DBUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.Scanner;
 
 
 
 public class ATM {
-    static BigDecimal summa;
-    static int numberOfChoice;
     static Scanner input = new Scanner(System.in);
+    BigDecimal balance;
+    int chosen;
 
-    public static User logging() throws SQLException {
+    public static User doLogin() throws SQLException {
         long id;
         String pass;
 
-        do {
+        while (true) {
             System.out.println("Введите свой ID");
             id = Long.parseLong(input.nextLine());
             System.out.println("Введите свой пароль");
             pass = input.nextLine();
-            if ((id != PostgreSQLConnUtils.getUserFromTable(id).getId() || (!Objects.equals(pass, PostgreSQLConnUtils.getUserFromTable(id).getPassword())))) {
+            User userFromTable = DBUtils.getUserFromTable(id);
+            if (userFromTable == null) {
                 System.out.println("Введен неправильный ID или пароль, поробуйте еще раз");
+                continue;
             }
-        } while ((id != PostgreSQLConnUtils.getUserFromTable(id).getId() || (!Objects.equals(pass, PostgreSQLConnUtils.getUserFromTable(id).getPassword()))));
-        return PostgreSQLConnUtils.getUserFromTable(id);
+            boolean correctPass = (pass.equals(DBUtils.getUserFromTable(id).getPassword()));
+            if  (!correctPass){
+                System.out.println("Введен неправильный ID или пароль, поробуйте еще раз");
+                continue;
+            }
+            break;
+        }
+        return DBUtils.getUserFromTable(id);
     }
 
-    public static void outputOnDisplay(User user) throws SQLException {
+    public  void outputOnDisplay(User user) throws SQLException {
 
         do {
             System.out.println("""
@@ -39,27 +46,26 @@ public class ATM {
                     4) Выход.""");
 
             System.out.println("\n" + "Введите номер необходимой вам функции:");
-            numberOfChoice = input.nextInt();
+            chosen = input.nextInt();
 
-            switch (numberOfChoice) {
+            switch (chosen) {
                 case (1):
-                    System.out.println(PostgreSQLConnUtils.getUserFromTable(user.getId()).getBalance());
+                    System.out.println(DBUtils.getUserFromTable(user.getId()).getBalance());
                     break;
                 case (2):
                     System.out.println("Сколько вы хотите снять?");
-                    summa = new BigDecimal(input.next());
-                    if ((PostgreSQLConnUtils.getUserFromTable(user.getId()).getBalance().subtract(summa)).compareTo(BigDecimal.ZERO) < 0) {
+                    BigDecimal withdraval = new BigDecimal(input.next());
+                    balance = (user.getBalance()).subtract(withdraval);
+                    if (balance.compareTo(BigDecimal.ZERO)<0) {
                         System.out.println("На счёте недостаточно средств");
-                    } else {
-                        PostgreSQLConnUtils.setBalanceToTable(user.getId(), (user.getBalance().subtract(summa)));
-                        user.setBalance(user.getBalance().subtract(summa));
+                        break;
                     }
+                        BankOperations.changeBalnce(user,balance);
                     break;
                 case (3):
                     System.out.println("Сколько вы хотите положить");
-                    summa = new BigDecimal(input.next());
-                    PostgreSQLConnUtils.setBalanceToTable(user.getId(),(user.getBalance().add(summa)));
-                    user.setBalance(user.getBalance().add(summa));
+                    balance = new BigDecimal(input.next()).add(user.getBalance());
+                    BankOperations.changeBalnce(user,balance);
                     break;
                 case (4):
                     System.out.println("затычка 4");
@@ -69,7 +75,7 @@ public class ATM {
                     break;
             }
         }
-        while (numberOfChoice != 4);
+        while (chosen != 4);
         input.close(); // вроде закрывать не надо
     }
 }

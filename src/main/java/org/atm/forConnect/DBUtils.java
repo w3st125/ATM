@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 
 
-public class PostgreSQLConnUtils {
+public class DBUtils {
 
     static Statement statement;
 
@@ -23,16 +23,16 @@ public class PostgreSQLConnUtils {
 
     public static User getUserFromTable(long id) throws SQLException {
         ResultSet resultSet = statement.executeQuery("select id,pass,balance from users where (id = '" + id + "');");
-        long userId = 0;
-        String userPass = "";
-        BigDecimal userBalance = BigDecimal.ZERO;
+        long userId;
+        String userPass;
+        BigDecimal userBalance;
         if (resultSet.next()) {
             userId = resultSet.getLong(1);
             userPass = resultSet.getString(2);
             userBalance = resultSet.getBigDecimal(3);
+            return new User(userId, userPass, userBalance);
         }
-        User user = new User(userId, userPass, userBalance);
-        return user;
+        else return null;
     }
 
     public static void setBalanceToTable(long id, BigDecimal sum) throws SQLException {
