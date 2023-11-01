@@ -1,22 +1,35 @@
 package org.atm.forATM;
 
-public class Account {
-  /*  private double balance=0; // копейки не считает, но считаем
-    private User holder; // holder - владелец.
-    private ArrayList<Transaction>transactions;
+import java.math.BigDecimal;
 
-    public Account(User holder){
-        this.holder=holder;
-        this.transactions= new ArrayList<Transaction>();
+public class Account {
+
+   private long userId;
+   private long accId;// holder - владелец.
+   private BigDecimal balance;
+
+   public Account(long userId, long accId, BigDecimal balance ){
+        this.userId=userId;
+        this.accId=accId;
+        this.balance=balance;
+        //this.transactions= new ArrayList<Transaction>();
     }
 
-    public double getBalance() {
+    public long getAccId() {
+        return accId;
+    }
+
+    public long getUserId() {
+        return accId;
+    }
+
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
-*/
+
 }
 

@@ -12,7 +12,7 @@ public class ATM {
     BigDecimal balance;
     int chosen;
 
-    public static User doLogin() throws SQLException {
+    public static Account doLogin() throws SQLException {
         long id;
         String pass;
 
@@ -26,52 +26,44 @@ public class ATM {
                 System.out.println("Введен неправильный ID или пароль, поробуйте еще раз");
                 continue;
             }
-            boolean correctPass = (pass.equals(DBUtils.getUserFromTable(id).getPassword()));
+            boolean correctPass = (pass.equals(userFromTable.getPassword()));
             if  (!correctPass){
                 System.out.println("Введен неправильный ID или пароль, поробуйте еще раз");
                 continue;
             }
             break;
         }
-        return DBUtils.getUserFromTable(id);
+        return DBUtils.getAccountFromTable(id);
     }
 
-    public  void outputOnDisplay(User user) throws SQLException {
+    public  void outputOnDisplay(Account account) throws SQLException {
 
         do {
-            System.out.println("""
-                    1) Показать баланс.
-                    2) Вывести деньги.
-                    3) Добавить деньги.
-                    4) Выход.""");
-
-            System.out.println("\n" + "Введите номер необходимой вам функции:");
-            chosen = input.nextInt();
+            ATMUtils.functionSelectionMenu();
+            balance = account.getBalance();
+            chosen = ATMUtils.inputNumber();
 
             switch (chosen) {
                 case (1):
-                    System.out.println(DBUtils.getUserFromTable(user.getId()).getBalance());
+                    System.out.println(balance);
                     break;
                 case (2):
                     System.out.println("Сколько вы хотите снять?");
-                    BigDecimal withdraval = new BigDecimal(input.next());
-                    balance = (user.getBalance()).subtract(withdraval);
+                    BigDecimal withdrawal = new BigDecimal(input.next());
+                    balance=balance.subtract(withdrawal);
                     if (balance.compareTo(BigDecimal.ZERO)<0) {
                         System.out.println("На счёте недостаточно средств");
                         break;
                     }
-                        BankOperations.changeBalnce(user,balance);
+                        BankOperations.changeBalnce(account,balance);
                     break;
                 case (3):
                     System.out.println("Сколько вы хотите положить");
-                    balance = new BigDecimal(input.next()).add(user.getBalance());
-                    BankOperations.changeBalnce(user,balance);
+                    balance = new BigDecimal(input.next()).add(balance);
+                    BankOperations.changeBalnce(account,balance);
                     break;
                 case (4):
                     System.out.println("затычка 4");
-                    break;
-                default:
-                    System.out.println("Вы ввели неверное число, попробуйте еще раз.");
                     break;
             }
         }

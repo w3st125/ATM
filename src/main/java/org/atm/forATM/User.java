@@ -2,18 +2,14 @@ package org.atm.forATM;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class User{
     private long id;
     private String password;
-    private BigDecimal balance; // копейки не считает, но считаем
-    private ArrayList<Transaction> transactions;
-
-    // private ArrayList<Account> accounts; На данном этапе у юзера будет только 1 аккаунт(счёт). Но оставил Список на будущее
-    public User(long id, String password, BigDecimal balance) {
+    public User(long id, String password) {
         this.id = id;
         this.password = password;
-        this.balance = balance;
     }
 
     public long getId() {
@@ -24,13 +20,6 @@ public class User{
         return password;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
 
 
 }

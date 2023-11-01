@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class BankOperations {
-    public static void changeBalnce(User user, BigDecimal toBalance) throws SQLException {
-        DBUtils.setBalanceToTable(user.getId(), toBalance);
-        user.setBalance(toBalance);
+    public static void changeBalnce(Account account, BigDecimal toBalance) throws SQLException {
+        account.setBalance(toBalance);
+        DBUtils.setBalanceToTable(account.getAccId(), toBalance);
     }
 }
