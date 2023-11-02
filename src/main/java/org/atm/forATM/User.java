@@ -1,15 +1,15 @@
 package org.atm.forATM;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-public class User{
+public class User {
     private long id;
     private String password;
-    public User(long id, String password) {
+
+    private String login;
+
+    public User(long id, String password, String login) {
         this.id = id;
         this.password = password;
+        this.login = login;
     }
 
     public long getId() {
@@ -20,6 +20,9 @@ public class User{
         return password;
     }
 
+    public String getLogin() {
+        return login;
+    }
 
 
 }

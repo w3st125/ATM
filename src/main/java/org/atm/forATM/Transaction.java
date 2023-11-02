@@ -1,6 +1,11 @@
 package org.atm.forATM;
 
+import java.time.LocalDateTime;
+
 public class Transaction {
-    private int sumOfTransaction; // сумма транзакции
-    //private Account accounts;  Какой акк провел транзакцию, позднее доделаю
+    private int amount;
+    private Account accountFrom;
+    private Account accountTo;
+    private LocalDateTime date;
+    private TransactionType type;
 }

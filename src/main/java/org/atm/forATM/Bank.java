@@ -13,7 +13,7 @@ public class Bank {
 //        Scanner sc = new Scanner(file);
 //        sc.useDelimiter("\n");
 //        while (sc.hasNext()) {  //парсим строку в объект User
-//            users.add(parseCSVLine(sc.next()));
+//            users.add(parseCSVLine(sc.nextLine()));
 //        }
 //    }
 //

@@ -14,22 +14,23 @@ public class DBUtils {
 
     static {
         try {
-            statement = getPostgreSQLConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
+            statement = getPostgreSQLConnection().createStatement();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    public static User getUserFromTable(long id) throws SQLException {
-        ResultSet resultSet = statement.executeQuery("select user_id,user_pass from users where (user_id = '" + id + "');");
+    public static User getUserFromTable(String login) throws SQLException {
+        ResultSet resultSet = statement.executeQuery("select user_id,user_pass,user_login from users where (user_login = '" + login + "');");
         long userId;
         String userPass;
+        String userLogin;
         if (resultSet.next()) {
             userId = resultSet.getLong(1);
             userPass = resultSet.getString(2);
-            return new User(userId, userPass);
+            userLogin = resultSet.getString(3);
+            return new User(userId, userPass, userLogin);
         }
         else return null;
     }
