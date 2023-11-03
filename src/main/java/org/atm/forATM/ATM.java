@@ -19,7 +19,7 @@ public class ATM {
             System.out.println("Введите свой логин");
             String login = ATMUtils.inputLogin();
             System.out.println("Введите свой пароль");
-            String pass = input.nextLine(); //todo сделать регулярку
+            String pass = ATMUtils.inputPassword();
             userFromTable = DBUtils.getUserFromTable(login);
             if (userFromTable == null) {
                 ATMUtils.inputWrongCredentialsError();
@@ -48,7 +48,7 @@ public class ATM {
                     break;
                 case (2):
                     System.out.println("Сколько вы хотите снять?");
-                    BigDecimal withdrawal = new BigDecimal(input.nextLine());
+                    BigDecimal withdrawal = ATMUtils.inputAmount();
                     balance = balance.subtract(withdrawal);
                     if (balance.compareTo(BigDecimal.ZERO) < 0) {
                         System.out.println("На счёте недостаточно средств");
@@ -58,7 +58,7 @@ public class ATM {
                     break;
                 case (3):
                     System.out.println("Сколько вы хотите положить");
-                    balance = new BigDecimal(input.nextLine()).add(balance);
+                    balance =  ATMUtils.inputAmount().add(balance);
                     BankOperations.changeBalnce(account, balance);
                     break;
                 case (4):

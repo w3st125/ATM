@@ -20,7 +20,7 @@ public class Account {
     }
 
     public long getUserId() {
-        return accId;
+        return userId;
     }
 
     public BigDecimal getBalance() {
