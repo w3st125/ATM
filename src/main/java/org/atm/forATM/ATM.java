@@ -17,9 +17,10 @@ public class ATM {
 
         while (true) {
             System.out.println("Введите свой логин");
-            String login = ATMUtils.inputLogin();
+            String login = input.nextLine();
             System.out.println("Введите свой пароль");
-            String pass = ATMUtils.inputPassword();
+            String pass = input.nextLine();
+            login = login.toLowerCase();
             userFromTable = DBUtils.getUserFromTable(login);
             if (userFromTable == null) {
                 ATMUtils.inputWrongCredentialsError();
@@ -36,6 +37,7 @@ public class ATM {
     }
 
     public void outputOnDisplay(Account account) throws SQLException {
+        boolean isLogged = true;
 
         do {
             ATMUtils.operationSelectionMenu();
@@ -62,11 +64,11 @@ public class ATM {
                     BankOperations.changeBalnce(account, balance);
                     break;
                 case (4):
-                    System.out.println("затычка 4");
+                    isLogged=false;
                     break;
             }
         }
-        while (chosen != 4);
+        while (isLogged);
         input.close(); // вроде закрывать не надо
     }
 }

@@ -45,9 +45,11 @@ public class ATMUtils {
         while (!check) {
             currentInput = input.nextLine();
             matcher = patternForLogin.matcher(currentInput);
-            if (matcher.find()) {
-                check = true;
+            if (!matcher.find()) {
+                outputWrongFormatLogin();
+                continue;
             }
+            else check = true;
         }
         return currentInput.toLowerCase();
     }
@@ -59,9 +61,11 @@ public class ATMUtils {
         while (!check) {
             currentInput = input.nextLine();
             matcher = patternForPassword.matcher(currentInput);
-            if (matcher.find()) {
-                check = true;
+            if (!matcher.find()) {
+                outputWrongFormatPassword();
+                 continue;
             }
+            else check = true;
         }
         return currentInput;
     }
@@ -79,7 +83,7 @@ public class ATMUtils {
             }
             else check = true;
         }
-        return BigDecimal.valueOf(Double.parseDouble(currentInput));
+        return new BigDecimal(currentInput);
     }
 
     public static void outputWrongNumberError() {
@@ -87,5 +91,11 @@ public class ATMUtils {
     }
     public static void inputWrongCredentialsError() {
         System.out.println("Введен неправильный логин или пароль, поробуйте еще раз\n");
+    }
+    public static void outputWrongFormatLogin() {
+        System.out.println("Неверный формат логина, попробуйте еще раз\n");
+    }
+    public static void outputWrongFormatPassword() {
+        System.out.println("Неверный формат пароля, попробуйте еще раз\n");
     }
 }
