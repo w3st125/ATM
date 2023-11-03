@@ -5,15 +5,18 @@ import java.math.BigDecimal;
 public class Account {
 
    private long userId;
-   private long accId;// holder - владелец.
+   private long accId;
    private BigDecimal balance;
 
-   public Account(long userId, long accId, BigDecimal balance ){
-        this.userId=userId;
-        this.accId=accId;
-        this.balance=balance;
-        //this.transactions= new ArrayList<Transaction>();
+    private String number;
+
+    public Account(long userId, long accId, BigDecimal balance, String number) {
+        this.userId = userId;
+        this.accId = accId;
+        this.balance = balance;
+        this.number = number;
     }
+
 
     public long getAccId() {
         return accId;
@@ -29,6 +32,10 @@ public class Account {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public String getNumber() {
+        return number;
     }
 
 }

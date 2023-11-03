@@ -1,5 +1,6 @@
 package org.atm.forConnect;
 import org.atm.forATM.Account;
+import org.atm.forATM.Transaction;
 import org.atm.forATM.User;
 
 
@@ -21,8 +22,8 @@ public class DBUtils {
     }
 
 
-    public static User getUserFromTable(String login) throws SQLException {
-        ResultSet resultSet = statement.executeQuery("select user_id,user_pass,user_login from users where (user_login = '" + login + "');");
+    public static User getUserByLogin(String login) throws SQLException {
+        ResultSet resultSet = statement.executeQuery("select user_id,user_pass,user_login from bank_user where (user_login = '" + login + "');");
         long userId;
         String userPass;
         String userLogin;
@@ -35,26 +36,38 @@ public class DBUtils {
         else return null;
     }
 
-    public static Account getAccountFromTable(long id ) throws SQLException {
-        ResultSet resultSet = statement.executeQuery("select user_id,account_id,acc_balance from accounts where (user_id = '" + id + "');");
+    public static Account getAccountByUserID(long userID ) throws SQLException {
+        ResultSet resultSet = statement.executeQuery("select acc_user_id,acc_id,acc_balance,acc_number from account where (acc_user_id = '" + userID + "');");
         long userId;
         long accountId;
-        BigDecimal acc_balance;
+        BigDecimal accountBalance;
+        String accountNumber;
         if (resultSet.next()){
             userId = resultSet.getLong(1);
             accountId = resultSet.getLong(2);
-            acc_balance = resultSet.getBigDecimal(3);
-            return new Account(userId,accountId,acc_balance);
+            accountBalance = resultSet.getBigDecimal(3);
+            accountNumber = resultSet.getString(4);
+            return new Account(userId,accountId,accountBalance,accountNumber);
         }
-        else return null;
+        else throw new IllegalStateException("У юзера обязан быть счёт");
     }
 
-    public static void setBalanceToTable(long id, BigDecimal sum) throws SQLException {
-        statement.executeUpdate("update accounts set acc_balance ="+sum+" where (account_id = '" + id + "');");
-
+    public static void setBalanceByAccountID(long accountID, BigDecimal sum) throws SQLException {
+        statement.executeUpdate("update account set acc_balance ="+sum+" where (acc_id = '" + accountID + "');");
     }
 
-    public static Connection getPostgreSQLConnection() {
+    public static void addMoneyToBalanceByAccountNumber(String accNumber, BigDecimal sum) throws SQLException {
+        statement.executeUpdate("update account set acc_balance = acc_balance+"+sum+" where (acc_number = '"+accNumber+"');");
+    }
+
+    public static void insertTransactionToTable(Transaction transaction) throws SQLException {
+        long typeNubmer = 0;
+        ResultSet resultSet = statement.executeQuery("select txnt_id from transaction_type where (txnt_name = '" + transaction.getType().toString() + "');");
+        if (resultSet.next()){ typeNubmer = resultSet.getLong(1);}
+        statement.execute("insert into transaction (txn_account_from, txn_account_to, txn_date, txn_type_id, txn_amount) values ('"+transaction.getAccountFrom()+"','"+transaction.getAccountTo()+"','"+transaction.getDate()+"','"+typeNubmer+"','"+transaction.getAmount()+"');");
+    }
+
+    private static Connection getPostgreSQLConnection() {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "pgpwd4habr");

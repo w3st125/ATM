@@ -17,7 +17,8 @@ public class ATMUtils {
                 1) Показать баланс.
                 2) Вывести деньги.
                 3) Добавить деньги.
-                4) Выход.""");
+                4) Перевод денег на другой счёт.
+                5) Выход.""");
 
         System.out.println("\n" + "Введите номер необходимой вам операции:");
     }
@@ -29,7 +30,7 @@ public class ATMUtils {
         while (!check) {
             currentInput = input.nextLine();
             matcher = patternForDigit.matcher(currentInput);
-            if (!matcher.find() || Integer.parseInt(currentInput) <= 0 && Integer.parseInt(currentInput) >= 5) {
+            if (!matcher.find() || Integer.parseInt(currentInput) <= 0 && Integer.parseInt(currentInput) >= 6) {
                 outputWrongNumberError();
             } else {
                 check = true;
@@ -70,7 +71,7 @@ public class ATMUtils {
         return currentInput;
     }
 
-    public static BigDecimal inputAmount() { //todo неуверен в правильности перевода строки в бигдесимал
+    public static BigDecimal inputAmount() {
         String currentInput = null;
         Matcher matcher;
         boolean check = false;
