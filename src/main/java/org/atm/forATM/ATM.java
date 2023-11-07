@@ -3,6 +3,7 @@ package org.atm.forATM;
 import org.atm.forConnect.DBUtils;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -44,8 +45,8 @@ public class ATM {
             int chosen = ATMUtils.inputOperationNumber();
             switch (chosen) {
                 case (1) -> showAccountBalanceByUser(currentUser);
-                case (2) -> payOutMoneyToCash(currentUser);
-                case (3) -> payInCashToAccount(currentUser);
+/*                case (2) -> payOutMoneyToCash(currentUser);
+                case (3) -> payInCashToAccount(currentUser);*/
                 case (4) -> transactionP2P(currentUser);
                 case (5) -> currentUser = null;
             }
@@ -63,24 +64,21 @@ public class ATM {
             System.out.println("На счёте недостаточно средств");
             return;
         }
-        DBUtils.setBalanceByAccountID(currentUser.getId(),currentUserAccountSubtract);
-        DBUtils.addMoneyToBalanceByAccountNumber(toNumber,amountTransaction);
-        Transaction transaction = new Transaction(amountTransaction,accountByUser.getNumber(),toNumber, LocalDateTime.now(),TransactionType.P2P);
-        DBUtils.insertTransactionToTable(transaction);
+        doP2P(currentUser,toNumber,amountTransaction,accountByUser,currentUserAccountSubtract);
 
     }
 
-    private static void payInCashToAccount(User currentUser) throws SQLException {
+    /*private static void payInCashToAccount(User currentUser) throws SQLException {
         System.out.println("Сколько вы хотите положить");
         Account accountByUser = DBUtils.getAccountByUserID(currentUser.getId());
         BigDecimal amountTransaction = ATMUtils.inputAmount();
         BigDecimal currentUserAccountBalance = amountTransaction.add(accountByUser.getBalance());
         BankOperations.changeBalanceByAccount(accountByUser, currentUserAccountBalance);
-        Transaction transaction = new Transaction(amountTransaction,"ATM",accountByUser.getNumber(), LocalDateTime.now(),TransactionType.PAY_IN);
-        DBUtils.insertTransactionToTable(transaction);
-    }
+        Transaction transaction = new Transaction(amountTransaction, "ATM", accountByUser.getNumber(), LocalDateTime.now(), TransactionType.PAY_IN);
+        DBUtils.insertTransactionToTable(transaction,);
+    }*/
 
-    private static void payOutMoneyToCash(User currentUser) throws SQLException {
+    /*private static void payOutMoneyToCash(User currentUser) throws SQLException {
         System.out.println("Сколько вы хотите снять?");
         BigDecimal withdrawal = ATMUtils.inputAmount();
         Account accountByUser = DBUtils.getAccountByUserID(currentUser.getId());
@@ -90,13 +88,32 @@ public class ATM {
             return;
         }
         BankOperations.changeBalanceByAccount(accountByUser, subtract);
-        Transaction transaction = new Transaction(withdrawal,accountByUser.getNumber(),"ATM", LocalDateTime.now(),TransactionType.PAY_OUT);
+        Transaction transaction = new Transaction(withdrawal, accountByUser.getNumber(), "ATM", LocalDateTime.now(), TransactionType.PAY_OUT);
         DBUtils.insertTransactionToTable(transaction);
-    }
+    }*/
 
     private static void showAccountBalanceByUser(User currentUser) throws SQLException {
         System.out.println(DBUtils.getAccountByUserID(currentUser.getId()).getBalance());
     }
 
+    private static void doP2P( User currentUser, String toNumber, BigDecimal amountTransaction, Account accountByUser, BigDecimal currentUserAccountSubtract) throws SQLException {
+       Connection conn = DBUtils.addPostgreSQLConnection();
+       conn.setAutoCommit(false);
+        try {
+            DBUtils.beginTransaction(conn);
+            DBUtils.setBalanceByAccountID(currentUser.getId(), currentUserAccountSubtract, conn);
+            DBUtils.addMoneyToBalanceByAccountNumber(toNumber, amountTransaction, conn);
+            Transaction transaction = new Transaction(amountTransaction, accountByUser.getNumber(), toNumber, LocalDateTime.now(), TransactionType.P2P);
+            DBUtils.insertTransactionToTable(transaction, conn);
+            if (true){
+                throw new RuntimeException();
+            }
+            DBUtils.commitTransaction(conn);
+        } catch (Exception e) {
+            DBUtils.rollbackTransaction(conn);
+        }
+
+
+    }
 
 }
