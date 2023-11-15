@@ -1,4 +1,4 @@
-package org.atm.forATM;
+package org.atm.model;
 
 public class User {
     private long id;

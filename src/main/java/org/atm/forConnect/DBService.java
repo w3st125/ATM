@@ -1,17 +1,18 @@
 package org.atm.forConnect;
 
-import org.atm.forATM.*;
+import org.atm.model.*;
+import org.atm.utils.ATMUtils;
+import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 
+@Service
+public class DBService {
 
-public class DBUtils {
-
-
-    public static User getUserByLogin(String login) throws SQLException {
+    public User getUserByLogin(String login) throws SQLException {
         PreparedStatement preparedStatement = addPostgreSQLConnection().prepareStatement("select user_id,user_pass,user_login from bank_user where (user_login = ?);");
         preparedStatement.setString(1, login);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -26,7 +27,7 @@ public class DBUtils {
         } else return null;
     }
 
-    public static Account getAccountByUserID(long userID) throws SQLException {
+    public Account getAccountByUserID(long userID) throws SQLException {
         PreparedStatement preparedStatement = addPostgreSQLConnection().prepareStatement("select acc_user_id,acc_id,acc_balance,acc_number from account where (acc_user_id = ?);");
         preparedStatement.setLong(1, userID);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -43,32 +44,32 @@ public class DBUtils {
         } else throw new IllegalStateException("У юзера обязан быть счёт");
     }
 
-    public static void setBalanceByAccountID(long accountID, BigDecimal sum, Connection connection) throws SQLException {
+    public void setBalanceByAccountID(long accountID, BigDecimal sum, Connection connection) throws SQLException {
         connection.createStatement().executeUpdate("update account set acc_balance =" + sum + " where (acc_id = '" + accountID + "');");
     }
 
-    public static void addMoneyToBalanceByAccountNumber(String accNumber, BigDecimal sum, Connection connection) throws SQLException {
+    public void addMoneyToBalanceByAccountNumber(String accNumber, BigDecimal sum, Connection connection) throws SQLException {
         connection.createStatement().executeUpdate("update account set acc_balance = acc_balance+" + sum + " where (acc_number = '" + accNumber + "');");
     }
 
-    public static void insertTransactionToTable(Transaction transaction, Connection connection) throws SQLException {
+    public void insertTransactionToTable(Transaction transaction, Connection connection) throws SQLException {
         connection.createStatement().execute("insert into transaction (txn_account_from, txn_account_to, txn_date, txn_type_id, txn_amount) values" +
                 " ('" + transaction.getAccountFrom() + "','" + transaction.getAccountTo() + "','" + transaction.getDate() + "','" + transaction.getType().getTypeID() + "','" + transaction.getAmount() + "');");
     }
 
-    public static void beginTransaction(Connection connection) throws SQLException {
+    public void beginTransaction(Connection connection) throws SQLException {
         connection.createStatement().execute("BEGIN");
     }
 
-    public static void commitTransaction(Connection connection) throws SQLException {
+    public void commitTransaction(Connection connection) throws SQLException {
         connection.createStatement().execute("COMMIT");
     }
 
-    public static void rollbackTransaction(Connection connection) throws SQLException {
+    public void rollbackTransaction(Connection connection) throws SQLException {
         connection.createStatement().execute("ROLLBACK");
     }
 
-    private static Connection addPostgreSQLConnection() throws SQLException { //todo Возможно ли сделать без паблика?
+    private Connection addPostgreSQLConnection() throws SQLException {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "pgpwd4habr");
@@ -84,69 +85,69 @@ public class DBUtils {
     }
 
 
-    public static void doP2P(User currentUser, String toNumber, BigDecimal amountTransaction) throws SQLException {
+    public void doP2P(P2PRequestParams p2PRequestParams) throws SQLException {
+        Long userId = p2PRequestParams.getUserId();
+        String toNumber = p2PRequestParams.getNumber();
+        BigDecimal amountTransaction = p2PRequestParams.getAmount();
+
         Connection conn = addPostgreSQLConnection();
         conn.setAutoCommit(false);
         try {
             beginTransaction(conn);
-            Account accountByUser = getAccountByUserID(currentUser.getId());
+            Account accountByUser = getAccountByUserID(userId);
             BigDecimal currentUserAccountSubtract = accountByUser.getBalance().subtract(amountTransaction);
             if (currentUserAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("На счёте недостаточно средств");
-                return;
+                throw new RuntimeException("На счете недостаточно средств");
             }
-            setBalanceByAccountID(currentUser.getId(), currentUserAccountSubtract, conn);
-            addMoneyToBalanceByAccountNumber(toNumber, amountTransaction, conn);
+            //setBalanceByAccountID(currentUser.getId(), currentUserAccountSubtract, conn);
+            //addMoneyToBalanceByAccountNumber(toNumber, amountTransaction, conn);
             Transaction transaction = new Transaction(amountTransaction, accountByUser.getNumber(), toNumber, LocalDateTime.now(), TransactionType.P2P);
             insertTransactionToTable(transaction, conn);
-            if (true) {
-                throw new RuntimeException();
-            }
             commitTransaction(conn);
         } catch (Exception e) {
             rollbackTransaction(conn);
+            throw new RuntimeException(e);
         }
 
 
     }
 
-    public static void doPayInCashToAccount(User currentUser) throws SQLException {
+    public void doPayInCashToAccount(PayInRequestParams payInRequestParams) throws SQLException {
+        Long userId = payInRequestParams.getUserId();
+        BigDecimal amount = payInRequestParams.getAmount();
         Connection conn = addPostgreSQLConnection();
         conn.setAutoCommit(false);
         try {
             beginTransaction(conn);
-            Account accountByUser = getAccountByUserID(currentUser.getId());
-            BigDecimal amountTransaction = ATMUtils.inputAmount();
-            BigDecimal currentUserAccountBalance = amountTransaction.add(accountByUser.getBalance());
-            BankOperations.changeBalanceByAccount(accountByUser, currentUserAccountBalance, conn);
-            Transaction transaction = new Transaction(amountTransaction, "ATM", accountByUser.getNumber(), LocalDateTime.now(), TransactionType.PAY_IN);
+            Account accountByUser = getAccountByUserID(userId);
+            Transaction transaction = new Transaction(amount, "atm", accountByUser.getNumber(), LocalDateTime.now(), TransactionType.PAY_IN);
             insertTransactionToTable(transaction, conn);
             commitTransaction(conn);
         } catch (Exception e) {
             rollbackTransaction(conn);
+            throw new RuntimeException(e);
         }
     }
 
-    public static void doPayOutMoneyToCash(User currentUser) throws SQLException {
+    public void doPayOutMoneyToCash(PayOutRequestParams payOutRequestParams) throws SQLException {
+        BigDecimal withdrawal = payOutRequestParams.getWithdrawal();
+        Long userId = payOutRequestParams.getUserId();
         Connection conn = addPostgreSQLConnection();
         conn.setAutoCommit(false);
         try {
             beginTransaction(conn);
-            BigDecimal withdrawal = ATMUtils.inputAmount();
-            Account accountByUser = getAccountByUserID(currentUser.getId());
+            Account accountByUser = getAccountByUserID(userId);
             BigDecimal subtract = accountByUser.getBalance().subtract(withdrawal);
             if (subtract.compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("На счёте недостаточно средств");
-                return;
+                throw new RuntimeException("На счете недостаточно средств");
             }
-            BankOperations.changeBalanceByAccount(accountByUser, subtract, conn);
-            Transaction transaction = new Transaction(withdrawal, accountByUser.getNumber(), "ATM", LocalDateTime.now(), TransactionType.PAY_OUT);
-            DBUtils.insertTransactionToTable(transaction, conn);
+            Transaction transaction = new Transaction(withdrawal, accountByUser.getNumber(), "atm", LocalDateTime.now(), TransactionType.PAY_OUT);
+            insertTransactionToTable(transaction, conn);
             commitTransaction(conn);
         } catch (Exception e) {
             rollbackTransaction(conn);
+            throw new RuntimeException(e);
         }
     }
 
 }
-

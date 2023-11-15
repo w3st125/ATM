@@ -1,4 +1,4 @@
-package org.atm.forATM;
+package org.atm.model;
 
 public enum TransactionType {
     PAY_IN(1),

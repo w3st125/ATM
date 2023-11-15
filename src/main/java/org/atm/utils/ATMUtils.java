@@ -1,16 +1,16 @@
-package org.atm.forATM;
+package org.atm.utils;
 
 import java.math.BigDecimal;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.atm.forATM.ATM.input;
 
 public class ATMUtils {
     private static final Pattern patternForDigit = Pattern.compile("^\\d$");
     private static final Pattern patternForLogin = Pattern.compile("^[a-zA-Z][a-zA-Z\\d]{5,15}$");
     private static final Pattern patternForPassword = Pattern.compile("^[\\w]{1,32}$"); //todo сделать от 6 символов(когда-нибудь)
     private static final Pattern patternForAmount = Pattern.compile("^\\d{1,18}(?:[.]\\d{2})?$"); //todo узнать что за символ :
+    public static Scanner input = new Scanner(System.in);
 
     public static void operationSelectionMenu() {
         System.out.println("""

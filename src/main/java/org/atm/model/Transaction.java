@@ -1,4 +1,4 @@
-package org.atm.forATM;
+package org.atm.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
