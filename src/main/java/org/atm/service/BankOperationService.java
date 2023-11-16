@@ -2,7 +2,7 @@ package org.atm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.atm.db.TransactionDao;
-import org.atm.model.Account;
+import org.atm.db.model.Account;
 import org.atm.model.Transaction;
 import org.atm.model.TransactionType;
 import org.springframework.stereotype.Service;

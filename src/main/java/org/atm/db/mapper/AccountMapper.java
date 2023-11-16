@@ -1,6 +1,6 @@
 package org.atm.db.mapper;
 
-import org.atm.model.Account;
+import org.atm.db.model.Account;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.math.BigDecimal;
