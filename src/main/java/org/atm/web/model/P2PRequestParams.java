@@ -1,4 +1,4 @@
-package org.atm.model;
+package org.atm.web.model;
 
 import lombok.Data;
 
