@@ -14,4 +14,5 @@ public class Transaction {
     private String accountTo;
     private LocalDateTime date;
     private TransactionType type;
+    private Long curId;
 }

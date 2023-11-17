@@ -13,7 +13,7 @@ public class TransactionDao {
 
     @SneakyThrows
     public void insertTransaction(Transaction transaction) {
-        jdbcTemplate.execute("insert into transaction (txn_account_from, txn_account_to, txn_date, txn_type_id, txn_amount) values" +
-                " ('" + transaction.getAccountFrom() + "','" + transaction.getAccountTo() + "','" + transaction.getDate() + "','" + transaction.getType().getTypeId() + "','" + transaction.getAmount() + "');");
+        jdbcTemplate.execute("insert into transaction (txn_account_from, txn_account_to, txn_date, txn_type_id, txn_amount, txn_currency_id) values" +
+                " ('" + transaction.getAccountFrom() + "','" + transaction.getAccountTo() + "','" + transaction.getDate() + "','" + transaction.getType().getTypeId() + "','" + transaction.getAmount() + "','" + transaction.getCurId() + "');");
     }
 }

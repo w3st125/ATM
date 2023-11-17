@@ -1,4 +1,4 @@
-package org.atm.web;
+package org.atm.web.controller;
 
 
 import lombok.RequiredArgsConstructor;
@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 
-
 @RestController
-@RequestMapping("/operation/")
+@RequestMapping("/operation")
 @RequiredArgsConstructor
 public class AtmController {
     private final BankOperationService bankOperationService;
@@ -21,24 +20,24 @@ public class AtmController {
 
     @PostMapping("/p2p")
     private void transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) {
-        bankOperationService.doP2P(p2PRequestParams.getUserId(), p2PRequestParams.getNumber(), p2PRequestParams.getAmount());
+        bankOperationService.doP2P(p2PRequestParams.getAccountNumberFrom(), p2PRequestParams.getAccountNumberTo(), p2PRequestParams.getAmount());
     }
 
 
     @PostMapping("/pay-in")
     private void payInCashToAccount(@RequestBody PayInRequestParams payInRequestParams) {
-        bankOperationService.doPayInCashToAccount(payInRequestParams.getUserId(), payInRequestParams.getAmount());
+        bankOperationService.doPayInCashToAccount(payInRequestParams.getAccountNumber(), payInRequestParams.getAmount());
     }
 
     @PostMapping("/pay-out")
     private void payOutMoneyToCash(@RequestBody PayOutRequestParams payOutRequestParams) {
-        bankOperationService.doPayOutMoneyToCash(payOutRequestParams.getUserId(), payOutRequestParams.getWithdrawal());
+        bankOperationService.doPayOutMoneyToCash(payOutRequestParams.getAccountNumber(), payOutRequestParams.getWithdrawal());
 
     }
 
-    @GetMapping("/show-balance/{userId}")
-    private BigDecimal showAccountBalanceByUser(@PathVariable Long userId)  {
-        return bankOperationService.getBalanceByUserId(userId);
+    @GetMapping("/show-balance/{number}")
+    private BigDecimal showAccountBalanceByNumber(@PathVariable String number) {
+        return bankOperationService.getBalanceByNumber(number);
     }
 
 }

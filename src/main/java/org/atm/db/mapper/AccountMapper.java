@@ -17,7 +17,8 @@ public class AccountMapper implements RowMapper<Account> {
         long accountId = rs.getLong(1);
         BigDecimal accountBalance = rs.getBigDecimal(2);
         String accountNumber = rs.getString(3);
+        Long currencyId = rs.getLong(4);
 
-        return new Account(accountId,accountBalance,accountNumber);
+        return new Account(accountId, accountBalance, accountNumber, currencyId);
     }
 }

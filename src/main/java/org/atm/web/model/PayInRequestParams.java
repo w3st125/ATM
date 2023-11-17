@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class PayInRequestParams {
-    private Long userId;
+    private String accountNumber;
     private BigDecimal amount;
+//  private  Long currencyId; // Код валюты
 }
