@@ -7,6 +7,9 @@ import org.atm.db.TransactionDao;
 import org.atm.db.model.Account;
 import org.atm.model.Transaction;
 import org.atm.model.TransactionType;
+import org.atm.utils.CommonExceptionHandler;
+import org.atm.utils.CurrencyException;
+import org.atm.utils.InsufficientFundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,10 +24,10 @@ public class BankOperationService {
         Account accountTo = accountService.getAccountByNubmer(numberTo);
         BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransaction);
         if (accountFrom.getCurrencyId() != accountTo.getCurrencyId()) {
-            throw new RuntimeException("Переводы на счёт с другой валютой запрещены!");
+            throw new CurrencyException();
         }
         if (currentAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("На счете недостаточно средств");
+            throw new InsufficientFundException();
         }
         Transaction transaction =
                 new Transaction(
@@ -54,7 +57,7 @@ public class BankOperationService {
         Account accountByNumber = accountService.getAccountByNubmer(number);
         BigDecimal subtract = accountByNumber.getBalance().subtract(withdrawal);
         if (subtract.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("На счете недостаточно средств");
+            throw new InsufficientFundException();
         }
         Transaction transaction =
                 new Transaction(
