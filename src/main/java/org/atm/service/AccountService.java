@@ -1,11 +1,10 @@
 package org.atm.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.atm.db.AccountDao;
 import org.atm.db.model.Account;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

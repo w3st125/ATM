@@ -1,15 +1,12 @@
 package org.atm.db.mapper;
 
-import org.atm.db.model.Account;
-import org.springframework.jdbc.core.RowMapper;
-
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import org.atm.db.model.Account;
+import org.springframework.jdbc.core.RowMapper;
 
 public class AccountMapper implements RowMapper<Account> {
-
 
     @Override
     public Account mapRow(ResultSet rs, int rowNum) throws SQLException {

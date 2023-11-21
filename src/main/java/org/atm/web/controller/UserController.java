@@ -15,5 +15,4 @@ public class UserController {
     private User getUserByLogin(@PathVariable String login) {
         return userService.getUserByLogin(login);
     }
-
 }

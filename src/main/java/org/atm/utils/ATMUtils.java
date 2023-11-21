@@ -8,12 +8,15 @@ import java.util.regex.Pattern;
 public class ATMUtils {
     private static final Pattern patternForDigit = Pattern.compile("^\\d$");
     private static final Pattern patternForLogin = Pattern.compile("^[a-zA-Z][a-zA-Z\\d]{5,15}$");
-    private static final Pattern patternForPassword = Pattern.compile("^[\\w]{1,32}$"); //todo сделать от 6 символов(когда-нибудь)
-    private static final Pattern patternForAmount = Pattern.compile("^\\d{1,18}(?:[.]\\d{2})?$"); //todo узнать что за символ :
+    private static final Pattern patternForPassword =
+            Pattern.compile("^[\\w]{1,32}$"); // todo сделать от 6 символов(когда-нибудь)
+    private static final Pattern patternForAmount =
+            Pattern.compile("^\\d{1,18}(?:[.]\\d{2})?$"); // todo узнать что за символ :
     public static Scanner input = new Scanner(System.in);
 
     public static void operationSelectionMenu() {
-        System.out.println("""
+        System.out.println(
+                """
                 1) Показать баланс.
                 2) Вывести деньги.
                 3) Добавить деньги.
@@ -30,7 +33,8 @@ public class ATMUtils {
         while (!check) {
             currentInput = input.nextLine();
             matcher = patternForDigit.matcher(currentInput);
-            if (!matcher.find() || Integer.parseInt(currentInput) <= 0 && Integer.parseInt(currentInput) >= 6) {
+            if (!matcher.find()
+                    || Integer.parseInt(currentInput) <= 0 && Integer.parseInt(currentInput) >= 6) {
                 outputWrongNumberError();
             } else {
                 check = true;

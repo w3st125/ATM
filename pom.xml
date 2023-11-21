@@ -69,6 +69,61 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.39.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>  <!--По умолчанию привязан к фазе verify-->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- optional: limit format enforcement to just the files changed by this feature branch -->
+                    <!--                    <ratchetFrom>origin/main</ratchetFrom>-->
+                    <formats>
+                        <!-- you can define as many formats as you want, each is independent -->
+                        <format>
+                            <!-- define the files to apply to -->
+                            <includes>
+                                <include>.gitattributes</include>
+                                <include>.gitignore</include>
+                            </includes>
+                            <!-- define the steps to apply to those files -->
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <tabs>true</tabs>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                            <indent>
+                                <spaces>true</spaces>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <!-- define a language-specific format -->
+                    <java>
+                        <!-- no need to specify files, inferred automatically, but you can if you want -->
+
+                        <!-- apply a specific flavor of google-java-format and reflow long strings -->
+                        <googleJavaFormat>
+                            <!--                            <version>21</version>                      &lt;!&ndash; optional, 1.8 is minimum supported version &ndash;&gt;-->
+                            <style>AOSP</style>                       <!-- GOOGLE or AOSP (optional) -->
+                            <reflowLongStrings>true</reflowLongStrings> <!-- optional -->
+                            <!--  <formatJavadoc>true</formatJavadoc>        &lt;!&ndash; optional &ndash;&gt;-->
+                            <!-- optional: custom group artifact (you probably don't need this) -->
+                            <groupArtifact>com.google.googlejavaformat:google-java-format</groupArtifact>
+                        </googleJavaFormat>
+
+                        <!-- make sure every file has the following copyright header.
+                          optionally, Spotless can set copyright years by digging
+                          through git history (see "license" section below) -->
+                    </java>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
