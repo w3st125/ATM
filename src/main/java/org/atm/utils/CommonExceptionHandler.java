@@ -18,13 +18,16 @@ public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(CurrencyException.class)
-    protected ResponseEntity<CommonException> handleCurrencyException(){
-        return new ResponseEntity<>(new CommonException("Переводы на счёт с другой валютой запрещены!"), HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<CommonException> handleCurrencyException() {
+        return new ResponseEntity<>(
+                new CommonException("Переводы на счёт с другой валютой запрещены!"),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InsufficientFundException.class)
-    protected ResponseEntity<CommonException> handleInsufficientFundException(){
-        return new ResponseEntity<>(new CommonException("На Вашем счёте недостаточно средств!"), HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<CommonException> handleInsufficientFundException() {
+        return new ResponseEntity<>(
+                new CommonException("На Вашем счёте недостаточно средств!"),
+                HttpStatus.BAD_REQUEST);
     }
-
 }

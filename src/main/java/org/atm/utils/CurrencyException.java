@@ -1,4 +1,3 @@
 package org.atm.utils;
 
-public class CurrencyException extends RuntimeException {
-}
+public class CurrencyException extends RuntimeException {}

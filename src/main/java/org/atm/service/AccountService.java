@@ -17,7 +17,7 @@ public class AccountService {
         return accountDao.findAccountByUserId(userId);
     }
 
-    public Account getAccountByNubmer(String number) {
+    public Account getAccountByNumber(String number) {
 
         return accountDao.findAccountByNumber(number);
     }

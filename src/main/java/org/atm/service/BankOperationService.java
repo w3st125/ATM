@@ -7,7 +7,6 @@ import org.atm.db.TransactionDao;
 import org.atm.db.model.Account;
 import org.atm.model.Transaction;
 import org.atm.model.TransactionType;
-import org.atm.utils.CommonExceptionHandler;
 import org.atm.utils.CurrencyException;
 import org.atm.utils.InsufficientFundException;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,8 @@ public class BankOperationService {
     private final AccountService accountService;
 
     public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransaction) {
-        Account accountFrom = accountService.getAccountByNubmer(numberFrom);
-        Account accountTo = accountService.getAccountByNubmer(numberTo);
+        Account accountFrom = accountService.getAccountByNumber(numberFrom);
+        Account accountTo = accountService.getAccountByNumber(numberTo);
         BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransaction);
         if (accountFrom.getCurrencyId() != accountTo.getCurrencyId()) {
             throw new CurrencyException();
@@ -41,7 +40,7 @@ public class BankOperationService {
     }
 
     public void doPayInCashToAccount(String number, BigDecimal amount) {
-        Account accountByNumber = accountService.getAccountByNubmer(number);
+        Account accountByNumber = accountService.getAccountByNumber(number);
         Transaction transaction =
                 new Transaction(
                         amount,
@@ -54,7 +53,7 @@ public class BankOperationService {
     }
 
     public void doPayOutMoneyToCash(String number, BigDecimal withdrawal) {
-        Account accountByNumber = accountService.getAccountByNubmer(number);
+        Account accountByNumber = accountService.getAccountByNumber(number);
         BigDecimal subtract = accountByNumber.getBalance().subtract(withdrawal);
         if (subtract.compareTo(BigDecimal.ZERO) < 0) {
             throw new InsufficientFundException();
@@ -71,6 +70,6 @@ public class BankOperationService {
     }
 
     public BigDecimal getBalanceByNumber(String number) {
-        return accountService.getAccountByNubmer(number).getBalance();
+        return accountService.getAccountByNumber(number).getBalance();
     }
 }
