@@ -1,4 +1,4 @@
-package org.atm.web.model;
+package org.atm.web.model.request;
 
 import java.math.BigDecimal;
 import lombok.Data;

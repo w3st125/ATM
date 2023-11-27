@@ -12,24 +12,25 @@ import org.atm.db.UserDao;
 import org.atm.db.model.Account;
 import org.atm.db.model.User;
 import org.atm.service.UserService;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
+/*@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)*/
+
 public class UserServiceTest {
-    @Mock private UserDao userDao;
+    @MockBean private UserDao userDao;
 
-    private UserService userService;
+    @Autowired private UserService userService;
 
     private static String login;
     private static List<Account> accountList = new ArrayList<>();
     private static User testUser;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareTestData() {
         Account testAccount = new Account(1L, BigDecimal.valueOf(10), "222", 638L);
         login = "w3st125";
@@ -37,13 +38,8 @@ public class UserServiceTest {
         testUser = new User(1, "2", "w3st125", accountList);
     }
 
-    @Before
-    public void init() {
-        userService = new UserService(userDao);
-    }
-
     @Test
-    public void userTest() { // Лучше заренеймить в виде формата Given_When_Then
+    public void should_return_user_when_given_login() { // Лучше заренеймить в виде формата
         when(userDao.findUserByLogin(argThat(arg -> Objects.equals(arg, testUser.getLogin()))))
                 .thenReturn(testUser);
 
