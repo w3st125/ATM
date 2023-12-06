@@ -23,7 +23,7 @@ public class AtmControllerTest {
 
     @MockBean private BankOperationService bankOperationService;
 
-    Account accountOne = new Account(1, BigDecimal.valueOf(10), "222", 638L);
+    Account accountOne = new Account(1L, 1L, BigDecimal.valueOf(10), "222", 638L);
 
     @Test
     public void should_return_balance_when_given_number() throws Exception {

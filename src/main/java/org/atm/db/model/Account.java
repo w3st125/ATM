@@ -30,8 +30,9 @@ public class Account {
     @Column(name = "acc_currency_id")
     private long currencyId;
 
-    public Account(long accId, BigDecimal balance, String number, Long curId) {
+    public Account(long accId, long accUserId, BigDecimal balance, String number, Long curId) {
         this.accId = accId;
+        this.userId = accUserId;
         this.balance = balance;
         this.number = number;
         this.currencyId = curId;

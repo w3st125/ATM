@@ -1,6 +1,5 @@
 package org.atm;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +11,7 @@ import org.atm.db.UserDao;
 import org.atm.db.model.Account;
 import org.atm.db.model.User;
 import org.atm.service.UserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserServiceTest {
 
     @BeforeAll
     public static void prepareTestData() {
-        Account testAccount = new Account(1L, BigDecimal.valueOf(10), "222", 638L);
+        Account testAccount = new Account(1L, 1L, BigDecimal.valueOf(10), "222", 638L);
         login = "w3st125";
         accountList.add(testAccount);
         testUser = new User(1, "2", "w3st125", accountList);
@@ -45,6 +45,6 @@ public class UserServiceTest {
 
         User user2 = userService.getUserByLogin(login);
 
-        assertEquals(testUser, user2);
+        Assertions.assertEquals(testUser, user2);
     }
 }

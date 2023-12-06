@@ -42,7 +42,8 @@ public class AtmController {
     }
 
     @PostMapping("/pay-out")
-    private PayOutResponseDto payOutMoneyToCash(@RequestBody PayOutRequestParams payOutRequestParams) {
+    private PayOutResponseDto payOutMoneyToCash(
+            @RequestBody PayOutRequestParams payOutRequestParams) {
         bankOperationService.doPayOutMoneyToCash(
                 payOutRequestParams.getAccountNumber(), payOutRequestParams.getWithdrawal());
         PayOutResponseDto payOutResponseDto = new PayOutResponseDto();
