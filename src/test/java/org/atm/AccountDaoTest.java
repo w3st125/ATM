@@ -25,23 +25,21 @@ public class AccountDaoTest {
     @Autowired AccountDao accountDao;
 
     @Container
-    public static JdbcDatabaseContainer postgreSQLContainer =
-            new PostgreSQLContainer("postgres:16.1")
+    public static JdbcDatabaseContainer<?> postgreSQLContainer =
+            new PostgreSQLContainer<>("postgres:16.1")
                     .withDatabaseName("postgres")
                     .withUsername("postgres")
                     .withPassword("sa")
                     .withInitScript("init.sql");
 
     @Test
-    @Transactional
     public void should_return_list_of_account_when_given_user_id() {
         List<Account> list = accountDao.findAccountByUserId(3L);
-        Long actualUserId = list.get(0).getUserId();
+        Long actualUserId = list.stream().findAny().map(Account::getUserId).orElseThrow();
         Assertions.assertEquals(3L, actualUserId);
     }
 
     @Test
-    @Transactional
     public void should_return_account_when_given_number() {
         Account account = accountDao.findAccountByNumber("555");
         Long actualId = account.getAccId();

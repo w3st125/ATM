@@ -29,16 +29,19 @@ public class TransactionDaoTest {
     @Autowired AccountDao accountDao;
 
     @Container
-    public static JdbcDatabaseContainer postgreSQLContainer =
-            new PostgreSQLContainer("postgres:16.1")
+    public static JdbcDatabaseContainer<?> postgreSQLContainer =
+            new PostgreSQLContainer<>("postgres:16.1")
                     .withDatabaseName("postgres")
                     .withUsername("postgres")
                     .withPassword("sa")
                     .withInitScript("init.sql");
 
     @Test
-    @Transactional
     public void should_change_balance_when_transaction_is_complete() { // стартовый баланс 87 и 373
+        BigDecimal balanceAccountFromB4T = accountDao.findAccountByNumber("222").getBalance();
+        BigDecimal balanceAccountToB4T = accountDao.findAccountByNumber("333").getBalance();
+        Assertions.assertEquals(BigDecimal.valueOf(87).compareTo(balanceAccountFromB4T), 0);
+        Assertions.assertEquals(BigDecimal.valueOf(373).compareTo(balanceAccountToB4T), 0);
         transactionDao.insertTransaction(
                 new Transaction(
                         BigDecimal.valueOf(10),

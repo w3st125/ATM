@@ -1,7 +1,9 @@
 package org.atm.web.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import org.atm.service.BankOperationService;
+import org.atm.web.mapper.TransactionMapper;
 import org.atm.web.model.request.P2PRequestParams;
 import org.atm.web.model.request.PayInRequestParams;
 import org.atm.web.model.request.PayOutRequestParams;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AtmController {
     private final BankOperationService bankOperationService;
+    private final TransactionMapper mapper;
 
     @PostMapping("/p2p")
     private P2PResponseDto transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) {
@@ -23,11 +26,7 @@ public class AtmController {
                 p2PRequestParams.getAccountNumberFrom(),
                 p2PRequestParams.getAccountNumberTo(),
                 p2PRequestParams.getAmount());
-        P2PResponseDto p2PResponseDto = new P2PResponseDto();
-        p2PResponseDto.setAmountTransaction(p2PRequestParams.getAmount());
-        p2PResponseDto.setNumberFrom(p2PRequestParams.getAccountNumberFrom());
-        p2PResponseDto.setNumberTo(p2PRequestParams.getAccountNumberTo());
-        return p2PResponseDto;
+        return mapper.p2PRequestParamsToP2PResponseDto(p2PRequestParams);
     }
 
     @PostMapping("/pay-in")
@@ -35,10 +34,7 @@ public class AtmController {
             @RequestBody PayInRequestParams payInRequestParams) {
         bankOperationService.doPayInCashToAccount(
                 payInRequestParams.getAccountNumber(), payInRequestParams.getAmount());
-        PayInResponseDto payInResponseDto = new PayInResponseDto();
-        payInResponseDto.setAmountTransaction(payInRequestParams.getAmount());
-        payInResponseDto.setNumber(payInRequestParams.getAccountNumber());
-        return payInResponseDto;
+        return mapper.payInRequestParamsToPayInResponseDto(payInRequestParams);
     }
 
     @PostMapping("/pay-out")
@@ -46,10 +42,7 @@ public class AtmController {
             @RequestBody PayOutRequestParams payOutRequestParams) {
         bankOperationService.doPayOutMoneyToCash(
                 payOutRequestParams.getAccountNumber(), payOutRequestParams.getWithdrawal());
-        PayOutResponseDto payOutResponseDto = new PayOutResponseDto();
-        payOutResponseDto.setNumber(payOutRequestParams.getAccountNumber());
-        payOutResponseDto.setWithdrawal(payOutRequestParams.getWithdrawal());
-        return payOutResponseDto;
+        return mapper.payOutRequestParamsToPayOutResponseDto(payOutRequestParams);
     }
 
     @GetMapping("/show-balance/{number}")

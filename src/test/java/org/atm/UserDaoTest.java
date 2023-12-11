@@ -24,15 +24,14 @@ public class UserDaoTest {
     @Autowired UserDao userDao;
 
     @Container
-    public static JdbcDatabaseContainer postgreSQLContainer =
-            new PostgreSQLContainer("postgres:16.1")
+    public static JdbcDatabaseContainer<?> postgreSQLContainer =
+            new PostgreSQLContainer<>("postgres:16.1")
                     .withDatabaseName("postgres")
                     .withUsername("postgres")
                     .withPassword("sa")
                     .withInitScript("init.sql");
 
     @Test
-    @Transactional
     public void should_return_user_when_given_login() {
         User user = userDao.findUserByLogin("w3st125");
         String actualLogin = user.getLogin();

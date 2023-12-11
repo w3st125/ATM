@@ -3,6 +3,7 @@ package org.atm.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.atm.db.TransactionDao;
 import org.atm.db.model.Account;
 import org.atm.model.Transaction;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BankOperationService {
 
     private final TransactionDao transactionDao;
@@ -23,9 +25,11 @@ public class BankOperationService {
         Account accountTo = accountService.getAccountByNumber(numberTo);
         BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransaction);
         if (accountFrom.getCurrencyId() != accountTo.getCurrencyId()) {
+            log.error("Throw exception",new CurrencyException());
             throw new CurrencyException();
         }
         if (currentAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
+            log.error("Throw exception",new InsufficientFundException());
             throw new InsufficientFundException();
         }
         Transaction transaction =
@@ -37,6 +41,7 @@ public class BankOperationService {
                         TransactionType.P2P,
                         accountFrom.getCurrencyId());
         transactionDao.insertTransaction(transaction);
+        log.info("BankOperationService: transaction from {} to {} done",transaction.getAccountFrom(),transaction.getAccountTo());
     }
 
     public void doPayInCashToAccount(String number, BigDecimal amount) {
@@ -50,6 +55,7 @@ public class BankOperationService {
                         TransactionType.PAY_IN,
                         accountByNumber.getCurrencyId());
         transactionDao.insertTransaction(transaction);
+        log.info("BankOperationService: transaction from {} to {} done",transaction.getAccountFrom(),transaction.getAccountTo());
     }
 
     public void doPayOutMoneyToCash(String number, BigDecimal withdrawal) {
@@ -67,9 +73,11 @@ public class BankOperationService {
                         TransactionType.PAY_OUT,
                         accountByNumber.getCurrencyId());
         transactionDao.insertTransaction(transaction);
+        log.info("BankOperationService: transaction from {} to {} done",transaction.getAccountFrom(),transaction.getAccountTo());
     }
 
     public BigDecimal getBalanceByNumber(String number) {
+        log.info("BankOperationService: get balance by number {}",number);
         return accountService.getAccountByNumber(number).getBalance();
     }
 }

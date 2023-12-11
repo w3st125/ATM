@@ -1,0 +1,29 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>tmp/slf4jlogbackexample.log</file>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>tmp/slf4jlogbackexample.%d{yyyy-MM-dd HH-mm}.%i.log</fileNamePattern>
+            <!-- Максимальный размер файлов лога 10 байт -->
+            <maxFileSize>1MB</maxFileSize>
+            <!-- Храним файлы логов 1 день -->
+            <maxHistory>1</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <!--<appender-ref ref="FILE"/>-->
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
