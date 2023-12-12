@@ -1,6 +1,5 @@
 package org.atm;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
 import org.atm.db.AccountDao;
 import org.atm.db.model.Account;

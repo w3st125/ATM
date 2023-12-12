@@ -1,6 +1,5 @@
 package org.atm;
 
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.atm.db.AccountDao;

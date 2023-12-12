@@ -13,7 +13,7 @@ public class UserService {
     private final UserDao userDao;
 
     public User getUserByLogin(String login) {
-        log.info("UserService: get user by login {}",login);
+        log.info("UserService: get user by login {}", login);
         return userDao.findUserByLogin(login);
     }
 }

@@ -20,7 +20,7 @@ public class AccountService {
     }
 
     public Account getAccountByNumber(String number) {
-        log.info("AccountService: get account by number {}",number);
+        log.info("AccountService: get account by number {}", number);
         return accountDao.findAccountByNumber(number);
     }
 }

@@ -1,7 +1,6 @@
 package org.atm.web.controller;
 
 import lombok.RequiredArgsConstructor;
-
 import org.atm.service.BankOperationService;
 import org.atm.web.mapper.TransactionMapper;
 import org.atm.web.model.request.P2PRequestParams;
@@ -47,8 +46,6 @@ public class AtmController {
 
     @GetMapping("/show-balance/{number}")
     private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number) {
-        ShowBalanceDto showBalanceDto = new ShowBalanceDto();
-        showBalanceDto.setBalance(bankOperationService.getBalanceByNumber(number));
-        return showBalanceDto;
+        return mapper.showBalance(bankOperationService, number);
     }
 }

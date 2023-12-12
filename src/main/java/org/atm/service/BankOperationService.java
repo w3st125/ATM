@@ -25,11 +25,11 @@ public class BankOperationService {
         Account accountTo = accountService.getAccountByNumber(numberTo);
         BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransaction);
         if (accountFrom.getCurrencyId() != accountTo.getCurrencyId()) {
-            log.error("Throw exception",new CurrencyException());
+            log.error("Throw exception", new CurrencyException());
             throw new CurrencyException();
         }
         if (currentAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
-            log.error("Throw exception",new InsufficientFundException());
+            log.error("Throw exception", new InsufficientFundException());
             throw new InsufficientFundException();
         }
         Transaction transaction =
@@ -41,7 +41,10 @@ public class BankOperationService {
                         TransactionType.P2P,
                         accountFrom.getCurrencyId());
         transactionDao.insertTransaction(transaction);
-        log.info("BankOperationService: transaction from {} to {} done",transaction.getAccountFrom(),transaction.getAccountTo());
+        log.info(
+                "BankOperationService: transaction from {} to {} done",
+                transaction.getAccountFrom(),
+                transaction.getAccountTo());
     }
 
     public void doPayInCashToAccount(String number, BigDecimal amount) {
@@ -55,7 +58,10 @@ public class BankOperationService {
                         TransactionType.PAY_IN,
                         accountByNumber.getCurrencyId());
         transactionDao.insertTransaction(transaction);
-        log.info("BankOperationService: transaction from {} to {} done",transaction.getAccountFrom(),transaction.getAccountTo());
+        log.info(
+                "BankOperationService: transaction from {} to {} done",
+                transaction.getAccountFrom(),
+                transaction.getAccountTo());
     }
 
     public void doPayOutMoneyToCash(String number, BigDecimal withdrawal) {
@@ -73,11 +79,14 @@ public class BankOperationService {
                         TransactionType.PAY_OUT,
                         accountByNumber.getCurrencyId());
         transactionDao.insertTransaction(transaction);
-        log.info("BankOperationService: transaction from {} to {} done",transaction.getAccountFrom(),transaction.getAccountTo());
+        log.info(
+                "BankOperationService: transaction from {} to {} done",
+                transaction.getAccountFrom(),
+                transaction.getAccountTo());
     }
 
     public BigDecimal getBalanceByNumber(String number) {
-        log.info("BankOperationService: get balance by number {}",number);
+        log.info("BankOperationService: get balance by number {}", number);
         return accountService.getAccountByNumber(number).getBalance();
     }
 }

@@ -1,6 +1,5 @@
 package org.atm;
 
-import jakarta.transaction.Transactional;
 import org.atm.db.UserDao;
 import org.atm.db.model.User;
 import org.junit.jupiter.api.Assertions;
