@@ -25,12 +25,10 @@ public class BankOperationService {
         Account accountTo = accountService.getAccountByNumber(numberTo);
         BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransaction);
         if (accountFrom.getCurrencyId() != accountTo.getCurrencyId()) {
-            log.error("Throw exception", new CurrencyException());
-            throw new CurrencyException();
+            throw new CurrencyException("Переводы на счёт с другой валютой запрещены!");
         }
         if (currentAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
-            log.error("Throw exception", new InsufficientFundException());
-            throw new InsufficientFundException();
+            throw new InsufficientFundException("На Вашем счёте недостаточно средств!");
         }
         Transaction transaction =
                 new Transaction(
@@ -68,7 +66,7 @@ public class BankOperationService {
         Account accountByNumber = accountService.getAccountByNumber(number);
         BigDecimal subtract = accountByNumber.getBalance().subtract(withdrawal);
         if (subtract.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InsufficientFundException();
+            throw new InsufficientFundException("На Вашем счёте недостаточно средств!");
         }
         Transaction transaction =
                 new Transaction(

@@ -1,6 +1,6 @@
 package org.atm.web.mapper;
 
-import org.atm.service.BankOperationService;
+import java.math.BigDecimal;
 import org.atm.web.model.request.P2PRequestParams;
 import org.atm.web.model.request.PayInRequestParams;
 import org.atm.web.model.request.PayOutRequestParams;
@@ -12,7 +12,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface TransactionMapper {
+public interface ResponseMapper {
     @Mapping(target = "numberFrom", source = "entity.accountNumberFrom")
     @Mapping(target = "numberTo", source = "entity.accountNumberTo")
     @Mapping(target = "amountTransaction", source = "entity.amount")
@@ -26,8 +26,6 @@ public interface TransactionMapper {
     @Mapping(target = "withdrawal", source = "entity.withdrawal")
     PayOutResponseDto payOutRequestParamsToPayOutResponseDto(PayOutRequestParams entity);
 
-    @Mapping(
-            target = "balance",
-            expression = "java(bankOperationService.getBalanceByNumber(number))")
-    ShowBalanceDto showBalance(BankOperationService bankOperationService, String number);
+    @Mapping(target = "balance", source = "entity")
+    ShowBalanceDto balanceToShowBalanceDto(BigDecimal entity);
 }

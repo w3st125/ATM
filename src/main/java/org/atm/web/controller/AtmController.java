@@ -1,8 +1,9 @@
 package org.atm.web.controller;
 
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.atm.service.BankOperationService;
-import org.atm.web.mapper.TransactionMapper;
+import org.atm.web.mapper.ResponseMapper;
 import org.atm.web.model.request.P2PRequestParams;
 import org.atm.web.model.request.PayInRequestParams;
 import org.atm.web.model.request.PayOutRequestParams;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AtmController {
     private final BankOperationService bankOperationService;
-    private final TransactionMapper mapper;
+    private final ResponseMapper mapper;
 
     @PostMapping("/p2p")
     private P2PResponseDto transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) {
@@ -46,6 +47,7 @@ public class AtmController {
 
     @GetMapping("/show-balance/{number}")
     private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number) {
-        return mapper.showBalance(bankOperationService, number);
+        BigDecimal balance = bankOperationService.getBalanceByNumber(number);
+        return mapper.balanceToShowBalanceDto(balance);
     }
 }
