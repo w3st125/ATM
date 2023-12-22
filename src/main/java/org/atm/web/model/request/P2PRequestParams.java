@@ -7,7 +7,7 @@ import lombok.Data;
 public class P2PRequestParams {
     private String accountNumberFrom; // От кого
     private String accountNumberTo; // Кому
-    private BigDecimal amount; // Сколько
+    private BigDecimal amountFrom;// Сколько
     //  private Long currencyId; // Код валюты
 
 }

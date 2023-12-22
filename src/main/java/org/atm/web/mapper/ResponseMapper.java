@@ -15,7 +15,7 @@ import org.mapstruct.Mapping;
 public interface ResponseMapper {
     @Mapping(target = "numberFrom", source = "entity.accountNumberFrom")
     @Mapping(target = "numberTo", source = "entity.accountNumberTo")
-    @Mapping(target = "amountTransaction", source = "entity.amount")
+    @Mapping(target = "amountTransactionFrom", source = "entity.amountFrom")
     P2PResponseDto p2PRequestParamsToP2PResponseDto(P2PRequestParams entity);
 
     @Mapping(target = "number", source = "entity.accountNumber")

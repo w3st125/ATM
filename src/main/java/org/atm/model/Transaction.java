@@ -8,10 +8,12 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Transaction {
-    private BigDecimal amount;
+    private BigDecimal amountFrom;
+    private BigDecimal amountTo;
     private String accountFrom;
     private String accountTo;
     private LocalDateTime date;
     private TransactionType type;
-    private Long curId;
+    private Long currencyIdFrom;
+    private Long currencyIdTo;
 }

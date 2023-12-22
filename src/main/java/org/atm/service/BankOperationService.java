@@ -1,14 +1,17 @@
 package org.atm.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.atm.db.CurrencyPairDao;
 import org.atm.db.TransactionDao;
 import org.atm.db.model.Account;
+import org.atm.model.CurrencyPair;
 import org.atm.model.Transaction;
 import org.atm.model.TransactionType;
-import org.atm.utils.CurrencyException;
+import org.atm.utils.ATMUtils;
 import org.atm.utils.InsufficientFundException;
 import org.springframework.stereotype.Service;
 
@@ -16,28 +19,37 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class BankOperationService {
-
+    private final CurrencyPairDao currencyPairDao;
     private final TransactionDao transactionDao;
     private final AccountService accountService;
 
-    public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransaction) {
+    public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransactionFrom) throws IOException, InterruptedException {
+        BigDecimal rightRate;
+        BigDecimal amountTransactionTo = amountTransactionFrom;
         Account accountFrom = accountService.getAccountByNumber(numberFrom);
         Account accountTo = accountService.getAccountByNumber(numberTo);
-        BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransaction);
+        for (CurrencyPair currencyPair : ATMUtils.createListOfPair(ATMUtils.createListOfExchangeRate())) {
+            currencyPairDao.updateColumnCurrencyPair(currencyPair);
+            log.info("Пара {} добавлена", currencyPair);
+        }
+        BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransactionFrom);
         if (accountFrom.getCurrencyId() != accountTo.getCurrencyId()) {
-            throw new CurrencyException("Переводы на счёт с другой валютой запрещены!");
+            rightRate = currencyPairDao.findExchangeRateById(accountFrom.getCurrencyId(),accountTo.getCurrencyId());
+            amountTransactionTo = amountTransactionFrom.multiply(rightRate);
         }
         if (currentAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
             throw new InsufficientFundException("На Вашем счёте недостаточно средств!");
         }
         Transaction transaction =
                 new Transaction(
-                        amountTransaction,
+                        amountTransactionFrom,
+                        amountTransactionTo,
                         numberFrom,
                         numberTo,
                         LocalDateTime.now(),
                         TransactionType.P2P,
-                        accountFrom.getCurrencyId());
+                        accountFrom.getCurrencyId(),
+                        accountTo.getCurrencyId());
         transactionDao.insertTransaction(transaction);
         log.info(
                 "BankOperationService: transaction from {} to {} done",
@@ -50,10 +62,12 @@ public class BankOperationService {
         Transaction transaction =
                 new Transaction(
                         amount,
+                        amount,
                         "atm",
                         number,
                         LocalDateTime.now(),
                         TransactionType.PAY_IN,
+                        accountByNumber.getCurrencyId(),
                         accountByNumber.getCurrencyId());
         transactionDao.insertTransaction(transaction);
         log.info(
@@ -71,10 +85,12 @@ public class BankOperationService {
         Transaction transaction =
                 new Transaction(
                         withdrawal,
+                        withdrawal,
                         number,
                         "atm",
                         LocalDateTime.now(),
                         TransactionType.PAY_OUT,
+                        accountByNumber.getCurrencyId(),
                         accountByNumber.getCurrencyId());
         transactionDao.insertTransaction(transaction);
         log.info(
@@ -83,7 +99,7 @@ public class BankOperationService {
                 transaction.getAccountTo());
     }
 
-    public BigDecimal getBalanceByNumber(String number) {
+    public BigDecimal getBalanceByNumber(String number)  {
         log.info("BankOperationService: get balance by number {}", number);
         return accountService.getAccountByNumber(number).getBalance();
     }

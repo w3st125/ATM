@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class TransactionDao {
     private static final String SQL_INSERT_INTO_TRANSACTION =
             "insert into transaction (txn_account_from, txn_account_to, txn_date, txn_type_id,"
-                    + " txn_amount, txn_currency_id) values (?,?,?,?,?,?)";
+                    + " txn_amount_from,txn_amount_to, txn_currency_id_from,txn_currency_id_to) values (?,?,?,?,?,?,?,?)";
     private final JdbcTemplate jdbcTemplate;
 
     @SneakyThrows
@@ -22,7 +22,10 @@ public class TransactionDao {
                 transaction.getAccountTo(),
                 transaction.getDate(),
                 transaction.getType().getTypeId(),
-                transaction.getAmount(),
-                transaction.getCurId());
+                transaction.getAmountFrom(),
+                transaction.getAmountTo(),
+                transaction.getCurrencyIdFrom(),
+                transaction.getCurrencyIdTo());
+
     }
 }

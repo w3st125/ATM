@@ -1,6 +1,5 @@
 package org.atm.web.controller;
 
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.atm.service.BankOperationService;
 import org.atm.web.mapper.ResponseMapper;
@@ -12,6 +11,8 @@ import org.atm.web.model.response.PayInResponseDto;
 import org.atm.web.model.response.PayOutResponseDto;
 import org.atm.web.model.response.ShowBalanceDto;
 import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/operation")
@@ -21,11 +22,11 @@ public class AtmController {
     private final ResponseMapper mapper;
 
     @PostMapping("/p2p")
-    private P2PResponseDto transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) {
+    private P2PResponseDto transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) throws IOException, InterruptedException {
         bankOperationService.doP2P(
                 p2PRequestParams.getAccountNumberFrom(),
                 p2PRequestParams.getAccountNumberTo(),
-                p2PRequestParams.getAmount());
+                p2PRequestParams.getAmountFrom());
         return mapper.p2PRequestParamsToP2PResponseDto(p2PRequestParams);
     }
 
@@ -46,7 +47,7 @@ public class AtmController {
     }
 
     @GetMapping("/show-balance/{number}")
-    private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number) {
+    private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number)  {
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
         return mapper.balanceToShowBalanceDto(balance);
     }

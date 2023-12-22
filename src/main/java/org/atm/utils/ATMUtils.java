@@ -1,7 +1,12 @@
 package org.atm.utils;
 
+import org.atm.model.CurrencyPair;
+import org.atm.web.client.Client;
+import org.atm.web.client.ParserXml;
+import org.atm.web.model.response.CurrencyDto;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,11 +22,11 @@ public class ATMUtils {
     public static void operationSelectionMenu() {
         System.out.println(
                 """
-                1) Показать баланс.
-                2) Вывести деньги.
-                3) Добавить деньги.
-                4) Перевод денег на другой счёт.
-                5) Выход.""");
+                        1) Показать баланс.
+                        2) Вывести деньги.
+                        3) Добавить деньги.
+                        4) Перевод денег на другой счёт.
+                        5) Выход.""");
 
         System.out.println("\n" + "Введите номер необходимой вам операции:");
     }
@@ -102,5 +107,40 @@ public class ATMUtils {
 
     public static void outputWrongFormatPassword() {
         System.out.println("Неверный формат пароля, попробуйте еще раз\n");
+    }
+
+    public static List<CurrencyDto> createListOfExchangeRate() throws IOException, InterruptedException {
+        CurrencyDto currency = new CurrencyDto();
+        currency.setRate("1");
+        currency.setCode("643");
+        List<CurrencyDto> list = ParserXml.parseXml(Client.meth());
+        list.add(currency);
+        return list;
+    }
+
+    public static List<CurrencyPair> createListOfPair(List<CurrencyDto> listOfCur) {
+        List<CurrencyPair> list = new ArrayList<>();
+        for (int i = 0; i < listOfCur.size(); i++) {
+            CurrencyDto currency;
+            CurrencyPair currencyPair = new CurrencyPair();
+            currencyPair.setCurrencyIdFrom(Long.valueOf(listOfCur.get(0).getCode()));
+            currencyPair.setCurrencyIdTo(Long.valueOf(listOfCur.get(1).getCode()));
+            currencyPair.setExchangeRate(BigDecimal.valueOf(Double.parseDouble(listOfCur.get(0).getRate()))
+                    .divide((BigDecimal.valueOf(Double.parseDouble(listOfCur.get(1).getRate()))),4,BigDecimal.ROUND_DOWN));
+            CurrencyPair currencyPair1 = new CurrencyPair();
+            currencyPair1.setCurrencyIdFrom(Long.valueOf(listOfCur.get(1).getCode()));
+            currencyPair1.setCurrencyIdTo(Long.valueOf(listOfCur.get(0).getCode()));
+            currencyPair1.setExchangeRate(BigDecimal.valueOf(Double.parseDouble(listOfCur.get(1).getRate()))
+                    .divide((BigDecimal.valueOf(Double.parseDouble(listOfCur.get(0).getRate()))),4,BigDecimal.ROUND_DOWN));
+            list.add(currencyPair);
+            list.add(currencyPair1);
+            currency = listOfCur.get(0);
+            listOfCur.remove(0);
+            listOfCur.add(currency);
+        }
+        for(CurrencyPair currencyPair:list){
+            System.out.println(currencyPair);
+        }
+        return list;
     }
 }

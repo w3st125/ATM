@@ -57,6 +57,16 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
@@ -186,6 +196,27 @@
                             <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <packageName>org.atm.web.client</packageName>
+                    <wsdlUrls>
+                        <wsdlUrl>https://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx</wsdlUrl>
+                    </wsdlUrls>
+                    <sourceDestDir>${sourcesDir}</sourceDestDir>
+                    <destDir>${classesDir}</destDir>
+                    <extension>true</extension>
                 </configuration>
             </plugin>
         </plugins>
