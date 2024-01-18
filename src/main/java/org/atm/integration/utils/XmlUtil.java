@@ -1,4 +1,5 @@
-package org.atm.web.client;
+package org.atm.integration.utils;
+
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -34,7 +35,6 @@ public class XmlUtil {
                 .newInstance();
         transformerFactory.setAttribute("indent-number", 2);
         Transformer transformer = transformerFactory.newTransformer();
-
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         Writer out = new StringWriter();
         transformer.transform(new DOMSource(document), new StreamResult(out));
@@ -47,8 +47,7 @@ public class XmlUtil {
             Node child = children.item(i);
             if (child instanceof Text && ((Text) child).getData().trim().length() == 0) {
                 e.removeChild(child);
-            }
-            else if (child instanceof Element) {
+            } else if (child instanceof Element) {
                 removeWhitespaceNodes((Element) child);
             }
         }

@@ -1,6 +1,6 @@
-package org.atm.web.client;
+package org.atm.integration.utils;
 
-public class SoapParserException extends Exception{
+public class SoapParserException extends Exception {
     private final ErrorCode errorCode;
 
 

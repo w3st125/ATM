@@ -1,5 +1,8 @@
-package org.atm.web.client;
+package org.atm.integration.parser;
 
+import org.atm.integration.utils.ErrorCode;
+import org.atm.integration.utils.SoapMessage;
+import org.atm.integration.utils.SoapParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -8,9 +11,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.ByteArrayInputStream;
 
-public class SoapParser {
+public class SoapParser { //todo переделать в сервис
     private Document document;
     private String namespace;
 
@@ -38,10 +40,9 @@ public class SoapParser {
         namespace = root.getNamespaceURI();
         String rootPrefix = root.getPrefix();
 
-        if(rootPrefix.isEmpty()) {
+        if (rootPrefix.isEmpty()) {
             stringBuilder.append("Body");
-        }
-        else {
+        } else {
             stringBuilder.append(rootPrefix).append(":Body");
         }
 
@@ -56,7 +57,7 @@ public class SoapParser {
 
     private Node getChildElement(Node node) throws SoapParserException {
         Node messageNode = node.getFirstChild();
-        while(messageNode != null && !(messageNode instanceof Element)) {
+        while (messageNode != null && !(messageNode instanceof Element)) {
             messageNode = messageNode.getNextSibling();
         }
 
@@ -88,7 +89,7 @@ public class SoapParser {
     }
 
     private boolean isFaultNode(Node node) {
-        if(node.getNamespaceURI().equals(namespace) &&
+        if (node.getNamespaceURI().equals(namespace) &&
                 node.getLocalName().equals("Fault")) {
             return true;
         } else {

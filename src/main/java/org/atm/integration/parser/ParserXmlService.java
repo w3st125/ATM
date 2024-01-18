@@ -1,6 +1,9 @@
-package org.atm.web.client;
+package org.atm.integration.parser;
 
 import lombok.SneakyThrows;
+import org.atm.integration.utils.XmlUtil;
+import org.atm.integration.utils.SoapMessage;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -9,16 +12,17 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
-import org.atm.web.model.response.CurrencyDto;
+import org.atm.integration.model.Currency;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserXml {
+@Service
+public class ParserXmlService { //todo переделать в сервис
 
     @SneakyThrows
-    public static List<CurrencyDto> parseXml(String content) {
+    public List<Currency> getExchangeRateOfEuroAndDollar(String content) {
         String currentCode;
-        List<CurrencyDto> list = new ArrayList<>();
+        List<Currency> list = new ArrayList<>();
         Document document = XmlUtil.fromXML(content);
         SoapParser parser = new SoapParser(document);
         SoapMessage soap = parser.parse();
@@ -37,7 +41,7 @@ public class ParserXml {
                         .item(0)
                         .getTextContent();
                 if (currentCode.equals("978") || currentCode.equals("840")) {
-                    CurrencyDto currency = new CurrencyDto();
+                    Currency currency = new Currency();
                     currency.setRate(eElement
                             .getElementsByTagName("Vcurs")
                             .item(0)

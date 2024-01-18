@@ -51,4 +51,10 @@ public class AtmController {
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
         return mapper.balanceToShowBalanceDto(balance);
     }
+
+    @GetMapping("/show-all-balance/{login}")
+    private ShowBalanceDto showAllAccountBalanceByLogin(@PathVariable String login)  {
+        BigDecimal balance = bankOperationService.getBalanceByLogin(login);
+        return mapper.balanceToShowBalanceDto(balance);
+    }
 }
