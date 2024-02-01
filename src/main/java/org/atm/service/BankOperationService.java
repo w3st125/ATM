@@ -29,7 +29,7 @@ public class BankOperationService {
     private final UserService userService;
     private final ExchangeRateService exchangeRateService;
 
-    public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransactionFrom) throws IOException, InterruptedException {
+    public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransactionFrom)  {
         BigDecimal exchangeRate;
         BigDecimal amountTransactionTo;
         Account accountFrom = accountService.getAccountByNumber(numberFrom);

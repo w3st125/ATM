@@ -1,6 +1,8 @@
 package org.atm.web.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.atm.db.model.User;
+import org.atm.service.AccountService;
 import org.atm.service.BankOperationService;
 import org.atm.web.mapper.ResponseMapper;
 import org.atm.web.model.request.P2PRequestParams;
@@ -10,6 +12,10 @@ import org.atm.web.model.response.P2PResponseDto;
 import org.atm.web.model.response.PayInResponseDto;
 import org.atm.web.model.response.PayOutResponseDto;
 import org.atm.web.model.response.ShowBalanceDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -20,6 +26,7 @@ import java.math.BigDecimal;
 public class AtmController {
     private final BankOperationService bankOperationService;
     private final ResponseMapper mapper;
+    private final AccountService accountService;
 
     @PostMapping("/p2p")
     private P2PResponseDto transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) throws IOException, InterruptedException {
@@ -47,7 +54,9 @@ public class AtmController {
     }
 
     @GetMapping("/show-balance/{number}")
-    private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number)  {
+    private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number, @AuthenticationPrincipal UserDetails userDetails)  {
+        User user = (User) userDetails;
+        accountService.checkAccountBelongToUser(user,number);
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
         return mapper.balanceToShowBalanceDto(balance);
     }
