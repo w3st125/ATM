@@ -14,6 +14,7 @@ public class TransactionDao {
                     + " txn_amount_from,txn_amount_to, txn_currency_id_from,txn_currency_id_to) values (?,?,?,?,?,?,?,?)";
     private final JdbcTemplate jdbcTemplate;
 
+
     @SneakyThrows
     public void insertTransaction(Transaction transaction) {
         jdbcTemplate.update(
@@ -26,6 +27,5 @@ public class TransactionDao {
                 transaction.getAmountTo(),
                 transaction.getCurrencyIdFrom(),
                 transaction.getCurrencyIdTo());
-
     }
 }

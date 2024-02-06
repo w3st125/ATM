@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final GetTokenServiceImpl getTokenService;
 
-    @PostMapping("/login")
+    @PostMapping("/login") //получаем токен
     private String getUserByLogin(@RequestHeader String login,@RequestHeader String password) throws Exception {
         return getTokenService.getToken(login,password);
     }

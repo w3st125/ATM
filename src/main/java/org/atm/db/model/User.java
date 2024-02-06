@@ -26,9 +26,13 @@ public class User implements UserDetails {
     @Column(name = "user_login")
     private String login;
 
+    @Column(name = "user_role_id")
+    private int roleId;
+
     @OneToMany
     @JoinColumn(name = "acc_user_id")
     private List<Account> accountList;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

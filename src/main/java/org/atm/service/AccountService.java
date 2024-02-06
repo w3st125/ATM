@@ -2,7 +2,6 @@ package org.atm.service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.atm.db.AccountDao;
@@ -19,7 +18,7 @@ public class AccountService {
 
     public List<Account> getAccountByUserId(Long userId) {
 
-        return accountDao.findAccountByUserId(userId);
+        return accountDao.findAccountListByUserId(userId);
     }
 
     public Account getAccountByNumber(String number) {
@@ -27,9 +26,15 @@ public class AccountService {
         return accountDao.findAccountByNumber(number);
     }
 
-    public void checkAccountBelongToUser(User user, String number){ //Принадлежность аккаунта юзеру
-        if (user.getAccountList().stream().noneMatch(account -> Objects.equals(account.getNumber(), number))){
+    public void checkAccountBelongToUserByNumber(User user, String number){ //Принадлежность аккаунта юзеру по номеру аккаунта
+        if (accountDao.findAccountListByUserId(user.getId()).stream().noneMatch(account -> Objects.equals(account.getNumber(), number))){
             throw new RuntimeException("Аккаунт не пренадлежит юзеру");
+        }
+    }
+
+    public void checkAccountBelongToUserByLogin(User user, String login){ //Принадлежность аккаунта юзеру по логину
+        if (!user.getLogin().equals(login)){
+            throw new RuntimeException("Логин не пренадлежит юзеру ");
         }
     }
 }

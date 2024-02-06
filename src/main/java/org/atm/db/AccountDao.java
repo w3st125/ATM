@@ -5,7 +5,7 @@ import org.atm.db.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountDao extends JpaRepository<Account, Long> {
-    List<Account> findAccountByUserId(Long userId);
+    List<Account> findAccountListByUserId(Long userId);
 
     Account findAccountByNumber(String number);
 }

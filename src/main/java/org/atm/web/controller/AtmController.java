@@ -12,12 +12,8 @@ import org.atm.web.model.response.P2PResponseDto;
 import org.atm.web.model.response.PayInResponseDto;
 import org.atm.web.model.response.PayOutResponseDto;
 import org.atm.web.model.response.ShowBalanceDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
 import java.math.BigDecimal;
 
 @RestController
@@ -29,7 +25,10 @@ public class AtmController {
     private final AccountService accountService;
 
     @PostMapping("/p2p")
-    private P2PResponseDto transactionP2P(@RequestBody P2PRequestParams p2PRequestParams) throws IOException, InterruptedException {
+    private P2PResponseDto transactionP2P(
+            @RequestBody P2PRequestParams p2PRequestParams, @AuthenticationPrincipal User user) {
+        if(user.getRoleId()==2){
+        accountService.checkAccountBelongToUserByNumber(user,p2PRequestParams.getAccountNumberFrom());}
         bankOperationService.doP2P(
                 p2PRequestParams.getAccountNumberFrom(),
                 p2PRequestParams.getAccountNumberTo(),
@@ -39,7 +38,9 @@ public class AtmController {
 
     @PostMapping("/pay-in")
     private PayInResponseDto payInCashToAccount(
-            @RequestBody PayInRequestParams payInRequestParams) {
+            @RequestBody PayInRequestParams payInRequestParams, @AuthenticationPrincipal User user) {
+        if(user.getRoleId()==2){
+        accountService.checkAccountBelongToUserByNumber(user,payInRequestParams.getAccountNumber());}
         bankOperationService.doPayInCashToAccount(
                 payInRequestParams.getAccountNumber(), payInRequestParams.getAmount());
         return mapper.payInRequestParamsToPayInResponseDto(payInRequestParams);
@@ -47,22 +48,26 @@ public class AtmController {
 
     @PostMapping("/pay-out")
     private PayOutResponseDto payOutMoneyToCash(
-            @RequestBody PayOutRequestParams payOutRequestParams) {
+            @RequestBody PayOutRequestParams payOutRequestParams, @AuthenticationPrincipal User user) {
+        if(user.getRoleId()==2){
+        accountService.checkAccountBelongToUserByNumber(user,payOutRequestParams.getAccountNumber());}
         bankOperationService.doPayOutMoneyToCash(
                 payOutRequestParams.getAccountNumber(), payOutRequestParams.getWithdrawal());
         return mapper.payOutRequestParamsToPayOutResponseDto(payOutRequestParams);
     }
 
     @GetMapping("/show-balance/{number}")
-    private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number, @AuthenticationPrincipal UserDetails userDetails)  {
-        User user = (User) userDetails;
-        accountService.checkAccountBelongToUser(user,number);
+    private ShowBalanceDto showAccountBalanceByNumber(@PathVariable String number, @AuthenticationPrincipal User user) {
+        if(user.getRoleId()==2){
+        accountService.checkAccountBelongToUserByNumber(user, number);}
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
         return mapper.balanceToShowBalanceDto(balance);
     }
 
     @GetMapping("/show-all-balance/{login}")
-    private ShowBalanceDto showAllAccountBalanceByLogin(@PathVariable String login)  {
+    private ShowBalanceDto showAllAccountBalanceByLogin(@PathVariable String login, @AuthenticationPrincipal User user) {
+        if(user.getRoleId()==2){
+        accountService.checkAccountBelongToUserByLogin(user, login);}
         BigDecimal balance = bankOperationService.getBalanceByLogin(login);
         return mapper.balanceToShowBalanceDto(balance);
     }

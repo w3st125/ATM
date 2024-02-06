@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.atm.db.UserDao;
 import org.atm.db.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,5 +16,9 @@ public class UserService {
     public User getUserByLogin(String login) {
         log.info("UserService: get user by login {}", login);
         return userDao.findUserByLogin(login);
+    }
+
+    public UserDetailsService userDetailsService() {
+        return this::getUserByLogin;
     }
 }

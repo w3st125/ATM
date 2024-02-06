@@ -33,7 +33,7 @@ public class AccountDaoTest {
 
     @Test
     public void should_return_list_of_account_when_given_user_id() {
-        List<Account> list = accountDao.findAccountByUserId(3L);
+        List<Account> list = accountDao.findAccountListByUserId(3L);
         Long actualUserId = list.stream().findAny().map(Account::getUserId).orElseThrow();
         Assertions.assertEquals(3L, actualUserId);
     }
