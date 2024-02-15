@@ -3,7 +3,6 @@ package org.atm.integration.utils;
 public class SoapParserException extends Exception {
     private final ErrorCode errorCode;
 
-
     public SoapParserException(ErrorCode errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
@@ -13,6 +12,4 @@ public class SoapParserException extends Exception {
         super(message, cause);
         this.errorCode = errorCode;
     }
-
-
 }

@@ -1,14 +1,11 @@
 package org.atm.utils;
 
-import org.atm.model.CurrencyPair;
-import org.atm.integration.client.Client;
-import org.atm.integration.parser.ParserXmlService;
-import org.atm.integration.model.Currency;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.atm.integration.model.Currency;
+import org.atm.model.CurrencyPair;
 
 public class ATMUtils {
     private static final Pattern patternForDigit = Pattern.compile("^\\d$");
@@ -109,7 +106,6 @@ public class ATMUtils {
         System.out.println("Неверный формат пароля, попробуйте еще раз\n");
     }
 
-
     public static List<CurrencyPair> createListOfPair(List<Currency> listOfCur) {
         List<CurrencyPair> list = new ArrayList<>();
         for (int i = 0; i < listOfCur.size(); i++) {
@@ -117,13 +113,23 @@ public class ATMUtils {
             CurrencyPair currencyPair = new CurrencyPair();
             currencyPair.setCurrencyIdFrom(Long.valueOf(listOfCur.get(0).getCode()));
             currencyPair.setCurrencyIdTo(Long.valueOf(listOfCur.get(1).getCode()));
-            currencyPair.setExchangeRate(BigDecimal.valueOf(Double.parseDouble(listOfCur.get(0).getRate()))
-                    .divide((BigDecimal.valueOf(Double.parseDouble(listOfCur.get(1).getRate()))), 4, BigDecimal.ROUND_DOWN));
+            currencyPair.setExchangeRate(
+                    BigDecimal.valueOf(Double.parseDouble(listOfCur.get(0).getRate()))
+                            .divide(
+                                    (BigDecimal.valueOf(
+                                            Double.parseDouble(listOfCur.get(1).getRate()))),
+                                    4,
+                                    BigDecimal.ROUND_DOWN));
             CurrencyPair currencyPair1 = new CurrencyPair();
             currencyPair1.setCurrencyIdFrom(Long.valueOf(listOfCur.get(1).getCode()));
             currencyPair1.setCurrencyIdTo(Long.valueOf(listOfCur.get(0).getCode()));
-            currencyPair1.setExchangeRate(BigDecimal.valueOf(Double.parseDouble(listOfCur.get(1).getRate()))
-                    .divide((BigDecimal.valueOf(Double.parseDouble(listOfCur.get(0).getRate()))), 4, BigDecimal.ROUND_DOWN));
+            currencyPair1.setExchangeRate(
+                    BigDecimal.valueOf(Double.parseDouble(listOfCur.get(1).getRate()))
+                            .divide(
+                                    (BigDecimal.valueOf(
+                                            Double.parseDouble(listOfCur.get(0).getRate()))),
+                                    4,
+                                    BigDecimal.ROUND_DOWN));
             list.add(currencyPair);
             list.add(currencyPair1);
             currency = listOfCur.get(0);
@@ -145,13 +151,16 @@ public class ATMUtils {
                 Currency cur2 = listOfCurrency.get(y);
                 currencyPair.setCurrencyIdFrom(Long.valueOf(cur1.getCode()));
                 currencyPair.setCurrencyIdTo(Long.valueOf(cur2.getCode()));
-                currencyPair.setExchangeRate((BigDecimal.valueOf(Double.parseDouble(cur1.getRate())))
-                        .divide((BigDecimal.valueOf(Double.parseDouble(cur2.getRate()))), 4, BigDecimal.ROUND_DOWN));
+                currencyPair.setExchangeRate(
+                        (BigDecimal.valueOf(Double.parseDouble(cur1.getRate())))
+                                .divide(
+                                        (BigDecimal.valueOf(Double.parseDouble(cur2.getRate()))),
+                                        4,
+                                        BigDecimal.ROUND_DOWN));
                 System.out.println(currencyPair);
                 listOfPair.add(currencyPair);
             }
         }
         return listOfPair;
     }
-
 }

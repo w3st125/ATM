@@ -1,5 +1,8 @@
 package org.atm.integration.parser;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.atm.integration.utils.ErrorCode;
 import org.atm.integration.utils.SoapMessage;
 import org.atm.integration.utils.SoapParserException;
@@ -8,11 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-public class SoapParser { //todo переделать в сервис
+public class SoapParser { // todo переделать в сервис
     private Document document;
     private String namespace;
 
@@ -29,8 +28,8 @@ public class SoapParser { //todo переделать в сервис
             Document result = getBodyMessage(getDocumentBuilder(), messageNode);
             return new SoapMessage(result, fault);
         } catch (ParserConfigurationException e) {
-            throw new SoapParserException(ErrorCode.CREATE_DOCUMENT_BUILDER,
-                    "Cannot create DocumentBuilder", e);
+            throw new SoapParserException(
+                    ErrorCode.CREATE_DOCUMENT_BUILDER, "Cannot create DocumentBuilder", e);
         }
     }
 
@@ -48,8 +47,7 @@ public class SoapParser { //todo переделать в сервис
 
         NodeList nodeList = root.getElementsByTagName(stringBuilder.toString());
         if (nodeList == null || nodeList.item(0) == null) {
-            throw new SoapParserException(ErrorCode.MISSING_BODY,
-                    "No Body tag found in document");
+            throw new SoapParserException(ErrorCode.MISSING_BODY, "No Body tag found in document");
         }
 
         return nodeList.item(0);
@@ -64,8 +62,7 @@ public class SoapParser { //todo переделать в сервис
         if (messageNode != null) {
             return messageNode;
         } else {
-            throw new SoapParserException(ErrorCode.MISSING_CHILD_NODE,
-                    "Missing message tag");
+            throw new SoapParserException(ErrorCode.MISSING_CHILD_NODE, "Missing message tag");
         }
     }
 
@@ -89,8 +86,7 @@ public class SoapParser { //todo переделать в сервис
     }
 
     private boolean isFaultNode(Node node) {
-        if (node.getNamespaceURI().equals(namespace) &&
-                node.getLocalName().equals("Fault")) {
+        if (node.getNamespaceURI().equals(namespace) && node.getLocalName().equals("Fault")) {
             return true;
         } else {
             return false;

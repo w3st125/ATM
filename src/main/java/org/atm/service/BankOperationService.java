@@ -1,12 +1,8 @@
 package org.atm.service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.atm.db.CurrencyPairDao;
@@ -29,18 +25,22 @@ public class BankOperationService {
     private final UserService userService;
     private final ExchangeRateService exchangeRateService;
 
-    public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransactionFrom)  {
+    public void doP2P(String numberFrom, String numberTo, BigDecimal amountTransactionFrom) {
         BigDecimal exchangeRate;
         BigDecimal amountTransactionTo;
         Account accountFrom = accountService.getAccountByNumber(numberFrom);
         Account accountTo = accountService.getAccountByNumber(numberTo);
-        for (CurrencyPair currencyPair : ATMUtils.createListPair(exchangeRateService.createListOfExchangeRate())) {
+        for (CurrencyPair currencyPair :
+                ATMUtils.createListPair(exchangeRateService.createListOfExchangeRate())) {
             currencyPairDao.updateColumnCurrencyPair(currencyPair);
             log.info("Пара {} добавлена", currencyPair);
         }
-        BigDecimal currentAccountSubtract = accountFrom.getBalance().subtract(amountTransactionFrom);
-            exchangeRate = currencyPairDao.findExchangeRateById(accountFrom.getCurrencyId(), accountTo.getCurrencyId());
-            amountTransactionTo = amountTransactionFrom.multiply(exchangeRate);
+        BigDecimal currentAccountSubtract =
+                accountFrom.getBalance().subtract(amountTransactionFrom);
+        exchangeRate =
+                currencyPairDao.findExchangeRateById(
+                        accountFrom.getCurrencyId(), accountTo.getCurrencyId());
+        amountTransactionTo = amountTransactionFrom.multiply(exchangeRate);
         if (currentAccountSubtract.compareTo(BigDecimal.ZERO) < 0) {
             throw new InsufficientFundException("На Вашем счёте недостаточно средств!");
         }
@@ -108,14 +108,24 @@ public class BankOperationService {
         return accountService.getAccountByNumber(number).getBalance();
     }
 
+
     public BigDecimal getBalanceByLogin(String login) {
         BigDecimal totalSum;
         log.info("BankOperationService: get balance by login {}", login);
-        totalSum = userService.getUserByLogin(login).getAccountList().stream()
-                .reduce(BigDecimal.ZERO, (total, account) ->
-                                total.add(account.getBalance()
-                                        .multiply(currencyPairDao.findExchangeRateById(account.getCurrencyId(), 643L)))
-                        , BigDecimal::add);
+        totalSum =
+                userService.getUserByLogin(login).getAccountList().stream()
+                        .reduce(
+                                BigDecimal.ZERO,
+                                (total, account) ->
+                                        total.add(
+                                                account.getBalance()
+                                                        .multiply(
+                                                                currencyPairDao
+                                                                        .findExchangeRateById(
+                                                                                account
+                                                                                        .getCurrencyId(),
+                                                                                643L))),
+                                BigDecimal::add);
         return totalSum.setScale(2, BigDecimal.ROUND_DOWN);
     }
 }

@@ -1,8 +1,9 @@
 package org.atm.integration.utils;
 
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,13 +12,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 public class XmlUtil {
-    public static Document fromXML(String xml) throws ParserConfigurationException, IOException, SAXException {
+    public static Document fromXML(String xml)
+            throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
@@ -31,8 +31,7 @@ public class XmlUtil {
         if (format) {
             removeWhitespaceNodes(document.getDocumentElement());
         }
-        TransformerFactory transformerFactory = TransformerFactory
-                .newInstance();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setAttribute("indent-number", 2);
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -52,5 +51,4 @@ public class XmlUtil {
             }
         }
     }
-
 }

@@ -5,4 +5,3 @@ public enum ErrorCode {
     CREATE_DOCUMENT_BUILDER,
     MISSING_CHILD_NODE
 }
-

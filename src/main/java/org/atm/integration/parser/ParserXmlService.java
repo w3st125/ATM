@@ -1,23 +1,23 @@
 package org.atm.integration.parser;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import lombok.SneakyThrows;
-import org.atm.integration.utils.XmlUtil;
+import org.atm.integration.model.Currency;
 import org.atm.integration.utils.SoapMessage;
+import org.atm.integration.utils.XmlUtil;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.StringReader;
-import org.atm.integration.model.Currency;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
-public class ParserXmlService { //todo переделать в сервис
+public class ParserXmlService { // todo переделать в сервис
 
     @SneakyThrows
     public List<Currency> getExchangeRateOfEuroAndDollar(String content) {
@@ -36,20 +36,13 @@ public class ParserXmlService { //todo переделать в сервис
             Node nNode = nList.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
-                currentCode = eElement
-                        .getElementsByTagName("Vcode")
-                        .item(0)
-                        .getTextContent();
+                currentCode = eElement.getElementsByTagName("Vcode").item(0).getTextContent();
                 if (currentCode.equals("978") || currentCode.equals("840")) {
                     Currency currency = new Currency();
-                    currency.setRate(eElement
-                            .getElementsByTagName("Vcurs")
-                            .item(0)
-                            .getTextContent());
-                    currency.setCode(eElement
-                            .getElementsByTagName("Vcode")
-                            .item(0)
-                            .getTextContent());
+                    currency.setRate(
+                            eElement.getElementsByTagName("Vcurs").item(0).getTextContent());
+                    currency.setCode(
+                            eElement.getElementsByTagName("Vcode").item(0).getTextContent());
                     list.add(currency);
                 }
             }
@@ -57,7 +50,3 @@ public class ParserXmlService { //todo переделать в сервис
         return list;
     }
 }
-
-
-
-

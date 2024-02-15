@@ -1,22 +1,20 @@
 package org.atm.web.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.lang.Function;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-import org.atm.db.model.User;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import javax.crypto.SecretKey;
+import lombok.RequiredArgsConstructor;
+import org.atm.db.model.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +28,7 @@ public class GetTokenServiceImpl implements GetTokenService {
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -37,7 +36,6 @@ public class GetTokenServiceImpl implements GetTokenService {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -49,18 +47,17 @@ public class GetTokenServiceImpl implements GetTokenService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(token).getPayload();
+           return Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(token).getPayload();
     }
 
-    private SecretKey getSignKey(){
+    private SecretKey getSignKey() {
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
     public String getToken(String username, String password) throws Exception {
-        if (username == null || password == null)
-            return null;
+        if (username == null || password == null) return null;
         User user = (User) userDetailsService.loadUserByUsername(username);
         if (password.equals(user.getPassword())) {
             Calendar calendar = Calendar.getInstance();

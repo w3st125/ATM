@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class Currency {
     String code;
-    String rate; //todo переветси данные в нужный тип
+    String rate; // todo переветси данные в нужный тип
 }
