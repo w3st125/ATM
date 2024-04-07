@@ -28,10 +28,9 @@ public class User implements UserDetails {
     @Column(name = "user_role_id")
     private int roleId;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "acc_user_id")
     private List<Account> accountList;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

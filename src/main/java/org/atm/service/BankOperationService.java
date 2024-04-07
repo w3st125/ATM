@@ -2,7 +2,6 @@ package org.atm.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.atm.db.CurrencyPairDao;
@@ -107,7 +106,6 @@ public class BankOperationService {
         log.info("BankOperationService: get balance by number {}", number);
         return accountService.getAccountByNumber(number).getBalance();
     }
-
 
     public BigDecimal getBalanceByLogin(String login) {
         BigDecimal totalSum;

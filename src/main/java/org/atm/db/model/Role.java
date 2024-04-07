@@ -1,8 +1,8 @@
 package org.atm.db.model;
 
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -15,6 +15,7 @@ public enum Role {
     public static Role getRole(int id) {
         return Arrays.stream(Role.values())
                 .filter(role -> role.getRoleId() == id)
-                        .findFirst().orElseThrow(RuntimeException::new);
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
     }
 }

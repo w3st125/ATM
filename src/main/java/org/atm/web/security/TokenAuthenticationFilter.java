@@ -9,8 +9,9 @@ import java.io.IOException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.atm.service.UserService;
-import org.atm.web.service.GetTokenServiceImpl;
+import org.atm.web.service.GetTokenService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -20,13 +21,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER = "Bearer ";
-    private final GetTokenServiceImpl getTokenService;
+    private final GetTokenService getTokenService;
     private final UserService userService;
+
     @Value("${login.request-url}")
     private String uri;
 
@@ -38,7 +40,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.contains(BEARER)) {
-            if (!request.getRequestURI().equals(uri)){
+            if (!request.getRequestURI().equals(uri)) {
                 response.setStatus(401);
                 return;
             }

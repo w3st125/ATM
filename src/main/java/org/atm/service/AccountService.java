@@ -32,14 +32,14 @@ public class AccountService {
             User user, String number) { // Принадлежность аккаунта юзеру по номеру аккаунта
         if (accountDao.findAccountListByUserId(user.getId()).stream()
                 .noneMatch(account -> Objects.equals(account.getNumber(), number))) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Аккаунт не принадлежит юзеру");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Аккаунт не принадлежит юзеру");
         }
     }
 
     public void checkAccountBelongToUserByLogin(
             User user, String login) { // Принадлежность аккаунта юзеру по логину
         if (!user.getLogin().equals(login)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Аккаунт не принадлежит юзеру");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Аккаунт не принадлежит юзеру");
         }
     }
 }

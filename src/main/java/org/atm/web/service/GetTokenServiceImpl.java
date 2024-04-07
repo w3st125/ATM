@@ -10,11 +10,9 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.atm.db.model.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +22,7 @@ public class GetTokenServiceImpl implements GetTokenService {
 
     private final UserDetailsService userDetailsService;
 
+    @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
@@ -37,6 +36,7 @@ public class GetTokenServiceImpl implements GetTokenService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    @Override
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -47,7 +47,7 @@ public class GetTokenServiceImpl implements GetTokenService {
     }
 
     private Claims extractAllClaims(String token) {
-           return Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(token).getPayload();
     }
 
     private SecretKey getSignKey() {

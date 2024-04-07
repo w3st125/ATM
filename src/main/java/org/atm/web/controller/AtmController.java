@@ -14,9 +14,7 @@ import org.atm.web.model.response.P2PResponseDto;
 import org.atm.web.model.response.PayInResponseDto;
 import org.atm.web.model.response.PayOutResponseDto;
 import org.atm.web.model.response.ShowBalanceDto;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +27,7 @@ public class AtmController {
     private final AccountService accountService;
 
     @PostMapping("/p2p")
-    private P2PResponseDto transactionP2P(
+    public P2PResponseDto transactionP2P(
             @RequestBody P2PRequestParams p2PRequestParams, @AuthenticationPrincipal User user) {
         if (user.getRoleId() == 2) {
             accountService.checkAccountBelongToUserByAccountNumber(
@@ -43,7 +41,7 @@ public class AtmController {
     }
 
     @PostMapping("/pay-in")
-    private PayInResponseDto payInCashToAccount(
+    public PayInResponseDto payInCashToAccount(
             @RequestBody PayInRequestParams payInRequestParams,
             @AuthenticationPrincipal User user) {
         if (user.getRoleId() == 2) {
@@ -56,7 +54,7 @@ public class AtmController {
     }
 
     @PostMapping("/pay-out")
-    private PayOutResponseDto payOutMoneyToCash(
+    public PayOutResponseDto payOutMoneyToCash(
             @RequestBody PayOutRequestParams payOutRequestParams,
             @AuthenticationPrincipal User user) {
         if (user.getRoleId() == 2) {
@@ -69,10 +67,12 @@ public class AtmController {
     }
 
     @GetMapping("/show-balance/{number}")
-    private ShowBalanceDto showAccountBalanceByNumber(
+    public ShowBalanceDto showAccountBalanceByNumber(
             @PathVariable String number, @AuthenticationPrincipal User user) {
-        if (user.getAuthorities().stream().noneMatch
-                (grantedAuthority -> grantedAuthority.getAuthority().equals(Role.ADMIN.name()))) {
+        if (user.getAuthorities().stream()
+                .noneMatch(
+                        grantedAuthority ->
+                                grantedAuthority.getAuthority().equals(Role.ADMIN.name()))) {
             accountService.checkAccountBelongToUserByAccountNumber(user, number);
         }
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
@@ -80,7 +80,7 @@ public class AtmController {
     }
 
     @GetMapping("/show-all-balance/{login}")
-    private ShowBalanceDto showAllAccountBalanceByLogin(
+    public ShowBalanceDto showAllAccountBalanceByLogin(
             @PathVariable String login, @AuthenticationPrincipal User user) {
         if (user.getRoleId() == 2) {
             accountService.checkAccountBelongToUserByLogin(user, login);
@@ -89,11 +89,9 @@ public class AtmController {
         return mapper.balanceToShowBalanceDto(balance);
     }
 
-
-    /*@PreAuthorize("hasAuthority('ADMIN')")*/
+    @PreAuthorize("hasAuthority('ADMIN')") // todo сделать норм для остальных
     @GetMapping("/for-admin/{number}")
-    private ShowBalanceDto forAdmin(
-            @PathVariable String number) {
+    public ShowBalanceDto forAdmin(@PathVariable String number) {
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
         return mapper.balanceToShowBalanceDto(balance);
     }

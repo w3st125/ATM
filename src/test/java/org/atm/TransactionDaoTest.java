@@ -36,23 +36,26 @@ public class TransactionDaoTest {
                     .withInitScript("init.sql");
 
     @Test
-    public void should_change_balance_when_transaction_is_complete() { // стартовый баланс 87 и 373
+    public void
+            should_change_balance_when_transaction_is_complete() { // стартовый баланс 35 и 106.82
         BigDecimal balanceAccountFromB4T = accountDao.findAccountByNumber("222").getBalance();
         BigDecimal balanceAccountToB4T = accountDao.findAccountByNumber("333").getBalance();
-        Assertions.assertEquals(BigDecimal.valueOf(87).compareTo(balanceAccountFromB4T), 0);
-        Assertions.assertEquals(BigDecimal.valueOf(373).compareTo(balanceAccountToB4T), 0);
+        Assertions.assertEquals(BigDecimal.valueOf(35).compareTo(balanceAccountFromB4T), 0);
+        Assertions.assertEquals(new BigDecimal("106.82").compareTo(balanceAccountToB4T), 0);
         transactionDao.insertTransaction(
                 new Transaction(
+                        BigDecimal.valueOf(10),
                         BigDecimal.valueOf(10),
                         "222",
                         "333",
                         LocalDateTime.now(),
                         TransactionType.P2P,
+                        643L,
                         643L));
         BigDecimal balanceAccountFrom = accountDao.findAccountByNumber("222").getBalance();
         BigDecimal balanceAccountTo = accountDao.findAccountByNumber("333").getBalance();
-        Assertions.assertEquals(BigDecimal.valueOf(77).compareTo(balanceAccountFrom), 0);
-        Assertions.assertEquals(BigDecimal.valueOf(383).compareTo(balanceAccountTo), 0);
+        Assertions.assertEquals(BigDecimal.valueOf(25).compareTo(balanceAccountFrom), 0);
+        Assertions.assertEquals(new BigDecimal("116.82").compareTo(balanceAccountTo), 0);
     }
 
     static class Initializer

@@ -35,7 +35,7 @@ public class UserServiceTest {
         Account testAccount = new Account(1L, 1L, BigDecimal.valueOf(10), "222", 638L);
         login = "w3st125";
         accountList.add(testAccount);
-        testUser = new User(1, "2", "w3st125", accountList);
+        testUser = new User(1, "2", "w3st125", 2, accountList);
     }
 
     @Test
