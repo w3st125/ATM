@@ -1,0 +1,24 @@
+### Запрос для получения токена
+
+# curl --location 'localhost:8080/user/login'
+#--header 'Content-Type: application/json'
+#--data '{
+#    "login":"w3st227",
+#    "password":"_"
+#}'
+POST localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "login": "w3st227",
+  "password": "_"
+}
+
+### Запрос для получения баланса
+# curl --location 'localhost:8080/operation/show-balance/222'
+#--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2MTI0MzYsInN1YiI6Inczc3QxMjUiLCJpYXQiOjE3MDc5OTAwMzZ9.egFgK4XK46KYANSHexeM4iaHAUzWe4q6mCjKnLq7qK0'
+GET localhost:8080/operation/show-balance/222
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2MTI0MzYsInN1YiI6Inczc3QxMjUiLCJpYXQiOjE3MDc5OTAwMzZ9.egFgK4XK46KYANSHexeM4iaHAUzWe4q6mCjKnLq7qK0
+
+
+

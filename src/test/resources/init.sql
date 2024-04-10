@@ -1,5 +1,3 @@
-create database atm_db;
-
 create table transaction_type
 (
     txnt_id   bigint      not null
@@ -10,9 +8,6 @@ create table transaction_type
             unique
 );
 
-alter table transaction_type
-    owner to postgres;
-
 create table currency
 (
     cur_id            bigint not null
@@ -21,9 +16,6 @@ create table currency
     cur_name          varchar(16),
     cur_exchange_rate numeric(20, 2)
 );
-
-alter table currency
-    owner to postgres;
 
 create table transaction
 (
@@ -44,9 +36,6 @@ create table transaction
     txn_amount_to        numeric(20, 2)
 );
 
-alter table transaction
-    owner to postgres;
-
 create table currency_pair
 (
     cer_pair_id          integer not null
@@ -61,9 +50,6 @@ create table currency_pair
     cer_exchange_rate    numeric(20, 4)
 );
 
-alter table currency_pair
-    owner to postgres;
-
 create table user_role
 (
     role_id   integer not null
@@ -71,9 +57,6 @@ create table user_role
             primary key,
     role_name varchar(16)
 );
-
-alter table user_role
-    owner to postgres;
 
 create table bank_user
 (
@@ -91,9 +74,6 @@ create table bank_user
             references user_role
 );
 
-alter table bank_user
-    owner to postgres;
-
 create table account
 (
     acc_user_id     bigint         not null
@@ -109,9 +89,6 @@ create table account
             references currency
 );
 
-alter table account
-    owner to postgres;
-
 create view new_view(txn_id, txn_date, txn_amount, txnt_name, user_from, user_to) as
 SELECT transaction.txn_id,
        transaction.txn_date,
@@ -126,9 +103,6 @@ FROM transaction
          LEFT JOIN bank_user bu ON bu.user_id = a.acc_user_id
          LEFT JOIN bank_user buu ON buu.user_id = b.acc_user_id;
 
-alter table new_view
-    owner to postgres;
-
 create function update_balance_function() returns trigger
     language plpgsql
 as
@@ -136,7 +110,7 @@ $$
 BEGIN
     update account
     set acc_balance= acc_balance - NEW.txn_amount_from
-    where account.acc_number =NEW.txn_account_from;
+    where account.acc_number = NEW.txn_account_from;
     update account
     set acc_balance= acc_balance + NEW.txn_amount_to
     where account.acc_number = NEW.txn_account_to;
@@ -144,41 +118,65 @@ BEGIN
 END
 $$;
 
-alter function update_balance_function() owner to postgres;
-
 create trigger update_balance_trg
     after insert
     on transaction
     for each row
 execute procedure update_balance_function();
 
-INSERT INTO public.transaction_type (txnt_id, txnt_name) VALUES (1, 'PAY_IN');
-INSERT INTO public.transaction_type (txnt_id, txnt_name) VALUES (2, 'PAY_OUT');
-INSERT INTO public.transaction_type (txnt_id, txnt_name) VALUES (3, 'P2P');
+INSERT INTO public.transaction_type (txnt_id, txnt_name)
+VALUES (1, 'PAY_IN');
+INSERT INTO public.transaction_type (txnt_id, txnt_name)
+VALUES (2, 'PAY_OUT');
+INSERT INTO public.transaction_type (txnt_id, txnt_name)
+VALUES (3, 'P2P');
 
-INSERT INTO public.user_role (role_id, role_name) VALUES (1, 'ADMIN');
-INSERT INTO public.user_role (role_id, role_name) VALUES (2, 'USER');
+INSERT INTO public.user_role (role_id, role_name)
+VALUES (1, 'ADMIN');
+INSERT INTO public.user_role (role_id, role_name)
+VALUES (2, 'USER');
 
-INSERT INTO public.currency (cur_id, cur_name, cur_exchange_rate) VALUES (643, 'RUB', 1.00);
-INSERT INTO public.currency (cur_id, cur_name, cur_exchange_rate) VALUES (840, 'USD', 89.00);
-INSERT INTO public.currency (cur_id, cur_name, cur_exchange_rate) VALUES (978, 'EUR', 96.00);
+INSERT INTO public.currency (cur_id, cur_name, cur_exchange_rate)
+VALUES (643, 'RUB', 1.00);
+INSERT INTO public.currency (cur_id, cur_name, cur_exchange_rate)
+VALUES (840, 'USD', 89.00);
+INSERT INTO public.currency (cur_id, cur_name, cur_exchange_rate)
+VALUES (978, 'EUR', 96.00);
 
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (7, 840, 840, 1.0000);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (1, 840, 978, 0.9288);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (6, 840, 643, 91.2434);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (2, 978, 840, 1.0765);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (9, 978, 978, 1.0000);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (3, 978, 643, 98.2279);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (5, 643, 840, 0.0109);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (4, 643, 978, 0.0101);
-INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate) VALUES (8, 643, 643, 1.0000);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (7, 840, 840, 1.0000);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (1, 840, 978, 0.9288);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (6, 840, 643, 91.2434);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (2, 978, 840, 1.0765);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (9, 978, 978, 1.0000);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (3, 978, 643, 98.2279);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (5, 643, 840, 0.0109);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (4, 643, 978, 0.0101);
+INSERT INTO public.currency_pair (cer_pair_id, cer_currency_id_from, cer_currency_id_to, cer_exchange_rate)
+VALUES (8, 643, 643, 1.0000);
 
-INSERT INTO public.bank_user (user_id, user_pass, user_login, user_role_id) VALUES (2, '3', 'wetrist', 2);
-INSERT INTO public.bank_user (user_id, user_pass, user_login, user_role_id) VALUES (3, '_', 'w3st227', 2);
-INSERT INTO public.bank_user (user_id, user_pass, user_login, user_role_id) VALUES (1, '2', 'w3st125', 1);
-INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id) VALUES (1, 100.00, 4, '444', 840);
-INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id) VALUES (2, 78.00, 5, '555', 840);
-INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id) VALUES (1, 84.00, 1, '111', 643);
-INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id) VALUES (2, 35.00, 2, '222', 643);
-INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id) VALUES (3, 13.02, 6, '666', 840);
-INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id) VALUES (3, 106.82, 3, '333', 978);
+INSERT INTO public.bank_user (user_id, user_pass, user_login, user_role_id)
+VALUES (2, '3', 'wetrist', 2);
+INSERT INTO public.bank_user (user_id, user_pass, user_login, user_role_id)
+VALUES (3, '_', 'w3st227', 2);
+INSERT INTO public.bank_user (user_id, user_pass, user_login, user_role_id)
+VALUES (1, '2', 'w3st125', 1);
+INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id)
+VALUES (1, 100.00, 4, '444', 840);
+INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id)
+VALUES (2, 78.00, 5, '555', 840);
+INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id)
+VALUES (1, 84.00, 1, '111', 643);
+INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id)
+VALUES (2, 35.00, 2, '222', 643);
+INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id)
+VALUES (3, 13.02, 6, '666', 840);
+INSERT INTO public.account (acc_user_id, acc_balance, acc_id, acc_number, acc_currency_id)
+VALUES (3, 106.82, 3, '333', 978);
