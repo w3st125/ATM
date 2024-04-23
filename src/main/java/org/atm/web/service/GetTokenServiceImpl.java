@@ -1,17 +1,23 @@
 package org.atm.web.service;
 
+import ch.qos.logback.core.boolex.Matcher;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.lang.Function;
 import io.jsonwebtoken.security.Keys;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import javax.crypto.SecretKey;
+
 import lombok.RequiredArgsConstructor;
 import org.atm.db.model.User;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +26,7 @@ public class GetTokenServiceImpl implements GetTokenService {
     @Value("${jwt.token.secret}")
     private String secret;
 
+    private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -59,7 +66,7 @@ public class GetTokenServiceImpl implements GetTokenService {
     public String getToken(String username, String password) throws Exception {
         if (username == null || password == null) return null;
         User user = (User) userDetailsService.loadUserByUsername(username);
-        if (password.equals(user.getPassword())) {
+        if (passwordEncoder.matches(password, user.getPassword())) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.YEAR, 1);
             JwtBuilder jwtBuilder = Jwts.builder();

@@ -1,12 +1,16 @@
 package org.atm.web.controller;
 
 import java.math.BigDecimal;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.atm.db.model.Role;
 import org.atm.db.model.User;
 import org.atm.service.AccountService;
 import org.atm.service.BankOperationService;
 import org.atm.web.mapper.ResponseMapper;
+import org.atm.web.model.request.HashMatcher;
 import org.atm.web.model.request.P2PRequestParams;
 import org.atm.web.model.request.PayInRequestParams;
 import org.atm.web.model.request.PayOutRequestParams;
@@ -16,12 +20,14 @@ import org.atm.web.model.response.PayOutResponseDto;
 import org.atm.web.model.response.ShowBalanceDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/operation")
 @RequiredArgsConstructor
 public class AtmController {
+    private final PasswordEncoder passwordEncoder;
     private final BankOperationService bankOperationService;
     private final ResponseMapper mapper;
     private final AccountService accountService;
@@ -95,4 +101,17 @@ public class AtmController {
         BigDecimal balance = bankOperationService.getBalanceByNumber(number);
         return mapper.balanceToShowBalanceDto(balance);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/hashfunc/{rowpass}")
+    public String tryHash (@PathVariable String rowpass){
+        return passwordEncoder.encode(rowpass);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/hashfunc/match")
+    public Boolean matchHash (@RequestBody HashMatcher hashMatcher){
+        return passwordEncoder.matches(hashMatcher.getPass(),hashMatcher.getHash());
+    }
+
 }

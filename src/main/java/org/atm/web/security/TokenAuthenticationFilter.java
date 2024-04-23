@@ -11,12 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.atm.service.UserService;
 import org.atm.web.service.GetTokenService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,6 +31,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER = "Bearer ";
     private final GetTokenService getTokenService;
     private final UserService userService;
+
 
     @Value("${login.request-url}")
     private String uri;
